@@ -123,7 +123,7 @@ export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
         >
           <div
             id="hud-timer-bar"
-            className="h-full bg-emerald-500 rounded-full transition-all duration-[16ms] ease-linear"
+            className="h-full bg-emerald-500 rounded-full transition-all duration-16 ease-linear"
             style={{ width: '0%' }}
           />
         </div>

@@ -56,6 +56,7 @@ function App() {
           <GameOverScreen
             key="gameOver"
             score={lastScore}
+            coinsEarned={Math.floor(lastScore / 10)}
             onRetry={() => setScreen('game')}
             onHome={() => setScreen('menu')}
             onShop={() => setScreen('shop')}

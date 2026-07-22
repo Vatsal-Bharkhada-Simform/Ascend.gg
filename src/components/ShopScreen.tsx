@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useMetaStore } from '../store/metaStore';
 import { ChevronLeft, Check, Lock } from 'lucide-react';
 import { AVAILABLE_SKINS, AVAILABLE_THEMES } from '../game/constants';
@@ -43,13 +43,22 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
     coins,
     unlockedSkinIds, equippedSkinId, equipSkin, unlockSkin,
     unlockedThemeIds, equippedThemeId, equipTheme, unlockTheme,
+    controlMode,
   } = useMetaStore();
 
   const [activeTab, setActiveTab] = useState<'skins' | 'themes'>('skins');
   // +1 = moving right (skins → themes), -1 = moving left (themes → skins)
   const [slideDirection, setSlideDirection] = useState(1);
+  // Keyboard arrow-nav: index of focused card (-1 = none)
+  const [focusedIndex, setFocusedIndex] = useState(-1);
 
   const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
+
+  const activeList = activeTab === 'skins' ? AVAILABLE_SKINS : AVAILABLE_THEMES;
+  const listLength = activeList.length;
+
+  // Ref for the scrollable container so we can scroll focused item into view
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleBack = () => {
     initAudio();
@@ -63,14 +72,79 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
     playClick();
     setSlideDirection(tab === 'themes' ? 1 : -1);
     setActiveTab(tab);
+    setFocusedIndex(-1); // reset focus on tab switch
   };
 
+  // Perform the equip/unlock action for the focused item
+  const activateFocused = () => {
+    if (focusedIndex < 0) return;
+    initAudio();
+    playClick();
+    if (activeTab === 'skins') {
+      const skin = AVAILABLE_SKINS[focusedIndex];
+      if (!skin) return;
+      const isUnlocked = unlockedSkinIds.includes(skin.id);
+      if (isUnlocked) equipSkin(skin.id);
+      else if (coins >= skin.cost) unlockSkin(skin.id, skin.cost);
+    } else {
+      const theme = AVAILABLE_THEMES[focusedIndex];
+      if (!theme) return;
+      const isUnlocked = unlockedThemeIds.includes(theme.id);
+      if (isUnlocked) equipTheme(theme.id);
+      else if (coins >= theme.cost) unlockTheme(theme.id, theme.cost);
+    }
+  };
+
+  // Keyboard navigation — always active
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'Escape':
+          handleBack();
+          break;
+        case '1':
+          handleTabChange('skins');
+          break;
+        case '2':
+          handleTabChange('themes');
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setFocusedIndex(prev => Math.min(prev + 1, listLength - 1));
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setFocusedIndex(prev => Math.max(prev - 1, 0));
+          break;
+        case 'Enter':
+          activateFocused();
+          break;
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, focusedIndex, listLength, coins]);
+
+  // Scroll focused card into view
+  useEffect(() => {
+    if (focusedIndex < 0 || !scrollRef.current) return;
+    const cards = scrollRef.current.querySelectorAll('[data-card]');
+    cards[focusedIndex]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [focusedIndex]);
+
+  // Reset focus when tab changes
+  useEffect(() => {
+    setFocusedIndex(-1);
+  }, [activeTab]);
+
   const renderSkins = () => (
-    <div className="space-y-4 p-6 pt-0 max-w-lg mx-auto w-full">
+    <div className="space-y-4 p-6 max-w-lg mx-auto w-full">
       {AVAILABLE_SKINS.map((skin, i) => {
         const isUnlocked = unlockedSkinIds.includes(skin.id);
         const isEquipped = equippedSkinId === skin.id;
         const canAfford = coins >= skin.cost;
+        const isFocused = focusedIndex === i;
 
         const handleSkinAction = () => {
           initAudio();
@@ -85,14 +159,21 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
         return (
           <motion.div
             key={skin.id}
+            data-card
             custom={i}
             variants={cardVariants}
             initial="hidden"
             animate="visible"
             className="flex items-center justify-between p-4 rounded-2xl border-2 transition-colors"
             style={{
-              borderColor: isEquipped ? activeTheme.accentColor : activeTheme.foregroundColor,
+              borderColor: isFocused
+                ? activeTheme.accentColor
+                : isEquipped
+                  ? activeTheme.accentColor
+                  : activeTheme.foregroundColor,
               backgroundColor: isEquipped ? activeTheme.foregroundColor : 'transparent',
+              outline: isFocused ? `2px solid ${activeTheme.accentColor}` : 'none',
+              outlineOffset: '2px',
             }}
             whileTap={{ scale: 0.98 }}
           >
@@ -105,7 +186,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
                 <div className="font-bold text-lg">{skin.name}</div>
                 {!isUnlocked && (
                   <div className="font-semibold text-sm" style={{ color: activeTheme.accentColor }}>
-                    {skin.cost} C
+                    {skin.cost} ◆
                   </div>
                 )}
               </div>
@@ -153,11 +234,12 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   );
 
   const renderThemes = () => (
-    <div className="space-y-4 p-6 pt-0 max-w-lg mx-auto w-full">
+    <div className="space-y-4 p-6 max-w-lg mx-auto w-full">
       {AVAILABLE_THEMES.map((theme, i) => {
         const isUnlocked = unlockedThemeIds.includes(theme.id);
         const isEquipped = equippedThemeId === theme.id;
         const canAfford = coins >= theme.cost;
+        const isFocused = focusedIndex === i;
 
         const handleThemeAction = () => {
           initAudio();
@@ -172,14 +254,21 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
         return (
           <motion.div
             key={theme.id}
+            data-card
             custom={i}
             variants={cardVariants}
             initial="hidden"
             animate="visible"
             className="flex items-center justify-between p-4 rounded-2xl border-2 transition-colors"
             style={{
-              borderColor: isEquipped ? activeTheme.accentColor : activeTheme.foregroundColor,
+              borderColor: isFocused
+                ? activeTheme.accentColor
+                : isEquipped
+                  ? activeTheme.accentColor
+                  : activeTheme.foregroundColor,
               backgroundColor: isEquipped ? activeTheme.foregroundColor : 'transparent',
+              outline: isFocused ? `2px solid ${activeTheme.accentColor}` : 'none',
+              outlineOffset: '2px',
             }}
             whileTap={{ scale: 0.98 }}
           >
@@ -196,7 +285,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
                 <div className="font-bold text-lg">{theme.name}</div>
                 {!isUnlocked && (
                   <div className="font-semibold text-sm" style={{ color: activeTheme.accentColor }}>
-                    {theme.cost} C
+                    {theme.cost} ◆
                   </div>
                 )}
               </div>
@@ -263,6 +352,14 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
           whileTap={{ scale: 0.9 }}
         >
           <ChevronLeft className="w-6 h-6" />
+          {controlMode === 'keyboard' && (
+            <kbd
+              className="ml-1 px-1 py-0.5 text-xs font-black rounded"
+              style={{ backgroundColor: activeTheme.backgroundColor, color: activeTheme.textColor, opacity: 0.4 }}
+            >
+              Esc
+            </kbd>
+          )}
         </motion.button>
 
         <motion.div
@@ -271,7 +368,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut', delay: 0.05 }}
         >
-          SHOP
+          LOADOUT
         </motion.div>
 
         <motion.div
@@ -282,44 +379,64 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
           transition={{ duration: 0.35, ease: 'easeOut', delay: 0.1 }}
         >
           <span className="mr-1">{coins}</span>
-          <span>C</span>
+          <span className="-mt-1">◆</span>
         </motion.div>
       </div>
 
-      {/* Tab switcher with sliding layoutId indicator */}
+      {/* Tab switcher — bare text labels with sliding accent underline */}
       <motion.div
-        className="flex px-6 mb-4 max-w-lg mx-auto w-full shrink-0"
+        className="flex px-6 mb-1 max-w-lg mx-auto w-full shrink-0 border-b"
+        style={{ borderColor: activeTheme.foregroundColor }}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
       >
-        <div className="flex p-1 rounded-xl w-full" style={{ backgroundColor: activeTheme.foregroundColor }}>
-          {(['skins', 'themes'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => handleTabChange(tab)}
-              className="relative flex-1 py-2 text-sm font-bold rounded-lg"
-              style={{ color: activeTheme.textColor }}
-            >
-              {/* Sliding pill behind active tab */}
-              {activeTab === tab && (
-                <motion.div
-                  layoutId="tab-indicator"
-                  className="absolute inset-0 rounded-lg shadow-sm"
-                  style={{ backgroundColor: activeTheme.backgroundColor }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                />
-              )}
-              <span
-                className="relative z-10 transition-opacity duration-150"
-                style={{ opacity: activeTab === tab ? 1 : 0.6 }}
+        {(['skins', 'themes'] as const).map((tab, tabIdx) => (
+          <button
+            key={tab}
+            onClick={() => handleTabChange(tab)}
+            className="relative flex-1 py-3 text-sm font-black tracking-widest transition-opacity duration-150 flex items-center justify-center gap-2"
+            style={{
+              color: activeTheme.textColor,
+              opacity: activeTab === tab ? 1 : 0.4,
+            }}
+          >
+            {tab.toUpperCase()}
+            {/* Key badge for tab switch */}
+            {controlMode === 'keyboard' && (
+              <kbd
+                className="px-1 py-0.5 text-xs font-black rounded"
+                style={{
+                  backgroundColor: activeTheme.foregroundColor,
+                  color: activeTheme.textColor,
+                  opacity: activeTab === tab ? 0.6 : 0.35,
+                }}
               >
-                {tab.toUpperCase()}
-              </span>
-            </button>
-          ))}
-        </div>
+                {tabIdx + 1}
+              </kbd>
+            )}
+            {/* Accent underline slides between tabs */}
+            {activeTab === tab && (
+              <motion.div
+                layoutId="tab-underline"
+                className="absolute bottom-0 left-0 right-0 h-0.5"
+                style={{ backgroundColor: activeTheme.accentColor }}
+                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+              />
+            )}
+          </button>
+        ))}
       </motion.div>
+
+      {/* Keyboard nav hint — only shown when keyboard mode and no focus yet */}
+      {controlMode === 'keyboard' && focusedIndex < 0 && (
+        <div
+          className="text-center text-xs font-black tracking-widest py-1 shrink-0"
+          style={{ opacity: 0.3, color: activeTheme.textColor }}
+        >
+          ↑ ↓ TO SELECT · ↵ TO EQUIP / UNLOCK
+        </div>
+      )}
 
       {/* Tab content — horizontal slide on switch */}
       <div className="flex-1 overflow-hidden relative">
@@ -332,6 +449,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
             animate="center"
             exit="exit"
             className="absolute inset-0 overflow-y-auto"
+            ref={scrollRef}
           >
             {activeTab === 'skins' ? renderSkins() : renderThemes()}
           </motion.div>
