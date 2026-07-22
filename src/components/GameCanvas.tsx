@@ -103,11 +103,11 @@ export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
         Mobile:  top-center
       */}
       <div
-        className="absolute pointer-events-none z-10 flex flex-col items-end justify-start gap-1 px-8"
+        className="absolute pointer-events-none z-10 flex flex-col items-start justify-start gap-1 px-8"
         style={
           isDesktop
             ? { top: 32, left: 0, width: oobZoneWidth }
-            : { top: 32, left: '50%', transform: 'translateX(-50%)' }
+            : { top: 32, left: 0 }
         }
       >
         <div
