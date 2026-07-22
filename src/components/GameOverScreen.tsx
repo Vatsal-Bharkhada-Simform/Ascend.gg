@@ -7,13 +7,12 @@ import { playClick, initAudio } from '../utils/audio';
 
 interface Props {
   score: number;
-  coinsEarned: number;
   onRetry: () => void;
   onHome: () => void;
   onShop: () => void;
 }
 
-export const GameOverScreen: React.FC<Props> = ({ score, coinsEarned, onRetry, onHome, onShop }) => {
+export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop }) => {
   const { bestScore, equippedThemeId, controlMode } = useMetaStore();
   
   const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
@@ -75,18 +74,9 @@ export const GameOverScreen: React.FC<Props> = ({ score, coinsEarned, onRetry, o
         transition={{ delay: 0.3, duration: 0.4, ease: 'easeOut' }}
       >
         <div className="w-full h-px mb-5" style={{ backgroundColor: activeTheme.foregroundColor }} />
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-5">
           <span className="text-xs font-black tracking-widest" style={{ opacity: 0.45 }}>BEST</span>
           <span className="text-xl font-black tabular-nums">{Math.max(score, bestScore)}</span>
-        </div>
-        <div className="flex items-center justify-between mb-5">
-          <span className="text-xs font-black tracking-widest" style={{ opacity: 0.45 }}>COINS EARNED</span>
-          <span
-            className="text-xl font-black tabular-nums"
-            style={{ color: activeTheme.accentColor }}
-          >
-            +{coinsEarned}
-          </span>
         </div>
         <div className="w-full h-px mb-6" style={{ backgroundColor: activeTheme.foregroundColor }} />
       </motion.div>

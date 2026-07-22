@@ -13,7 +13,7 @@ type Screen = 'menu' | 'game' | 'gameOver' | 'shop';
 function App() {
   const [screen, setScreen] = useState<Screen>('menu');
   const [lastScore, setLastScore] = useState(0);
-  const { setBestScore, addCoins, equippedThemeId, muted } = useMetaStore();
+  const { setBestScore, equippedThemeId, muted } = useMetaStore();
 
   const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
 
@@ -24,10 +24,6 @@ function App() {
   const handleGameOver = (score: number) => {
     setLastScore(score);
     setBestScore(score);
-    // Simple coin logic: 1 coin per 10 points for now
-    if (score > 0) {
-      addCoins(Math.floor(score / 10));
-    }
     setScreen('gameOver');
   };
 
@@ -56,7 +52,6 @@ function App() {
           <GameOverScreen
             key="gameOver"
             score={lastScore}
-            coinsEarned={Math.floor(lastScore / 10)}
             onRetry={() => setScreen('game')}
             onHome={() => setScreen('menu')}
             onShop={() => setScreen('shop')}

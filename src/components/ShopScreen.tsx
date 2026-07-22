@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMetaStore } from '../store/metaStore';
-import { ChevronLeft, Check, Lock, Unlock } from 'lucide-react';
+import { ChevronLeft, Check } from 'lucide-react';
 import { AVAILABLE_SKINS, AVAILABLE_THEMES } from '../game/constants';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { initAudio, playClick } from '../utils/audio';
@@ -40,9 +40,8 @@ const tabContentVariants: Variants = {
 
 export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   const {
-    coins,
-    unlockedSkinIds, equippedSkinId, equipSkin, unlockSkin,
-    unlockedThemeIds, equippedThemeId, equipTheme, unlockTheme,
+    equippedSkinId, equipSkin,
+    equippedThemeId, equipTheme,
     controlMode,
   } = useMetaStore();
 
@@ -82,16 +81,10 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
     playClick();
     if (activeTab === 'skins') {
       const skin = AVAILABLE_SKINS[focusedIndex];
-      if (!skin) return;
-      const isUnlocked = unlockedSkinIds.includes(skin.id);
-      if (isUnlocked) equipSkin(skin.id);
-      else if (coins >= skin.cost) unlockSkin(skin.id, skin.cost);
+      if (skin) equipSkin(skin.id);
     } else {
       const theme = AVAILABLE_THEMES[focusedIndex];
-      if (!theme) return;
-      const isUnlocked = unlockedThemeIds.includes(theme.id);
-      if (isUnlocked) equipTheme(theme.id);
-      else if (coins >= theme.cost) unlockTheme(theme.id, theme.cost);
+      if (theme) equipTheme(theme.id);
     }
   };
 
@@ -124,7 +117,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, focusedIndex, listLength, coins]);
+  }, [activeTab, focusedIndex, listLength]);
 
   // Scroll focused card into view
   useEffect(() => {
@@ -141,19 +134,13 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   const renderSkins = () => (
     <div className="space-y-3 sm:space-y-4 p-4 sm:p-6 max-w-lg mx-auto w-full">
       {AVAILABLE_SKINS.map((skin, i) => {
-        const isUnlocked = unlockedSkinIds.includes(skin.id);
         const isEquipped = equippedSkinId === skin.id;
-        const canAfford = coins >= skin.cost;
         const isFocused = focusedIndex === i;
 
         const handleSkinAction = () => {
           initAudio();
           playClick();
-          if (isUnlocked) {
-            equipSkin(skin.id);
-          } else if (canAfford) {
-            unlockSkin(skin.id, skin.cost);
-          }
+          equipSkin(skin.id);
         };
 
         return (
@@ -185,31 +172,15 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
               />
               <div>
                 <div className="font-bold text-lg">{skin.name}</div>
-                {!isUnlocked && (
-                  <div className="font-semibold text-sm" style={{ color: activeTheme.accentColor }}>
-                    {skin.cost} ◆
-                  </div>
-                )}
               </div>
             </div>
 
-            {isEquipped ? (
+            {isEquipped && (
               <div
                 className="flex items-center justify-center w-10 h-10 rounded-full"
                 style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
               >
                 <Check className="w-5 h-5" />
-              </div>
-            ) : isUnlocked ? null : (
-              <div
-                className="relative flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm"
-                style={{
-                  backgroundColor: canAfford ? activeTheme.accentColor : activeTheme.foregroundColor,
-                  color: canAfford ? activeTheme.backgroundColor : activeTheme.textColor,
-                  opacity: canAfford ? 1 : 0.5,
-                }}
-              >
-                {canAfford ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
               </div>
             )}
           </motion.div>
@@ -221,19 +192,13 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   const renderThemes = () => (
     <div className="space-y-3 sm:space-y-4 p-4 sm:p-6 max-w-lg mx-auto w-full">
       {AVAILABLE_THEMES.map((theme, i) => {
-        const isUnlocked = unlockedThemeIds.includes(theme.id);
         const isEquipped = equippedThemeId === theme.id;
-        const canAfford = coins >= theme.cost;
         const isFocused = focusedIndex === i;
 
         const handleThemeAction = () => {
           initAudio();
           playClick();
-          if (isUnlocked) {
-            equipTheme(theme.id);
-          } else if (canAfford) {
-            unlockTheme(theme.id, theme.cost);
-          }
+          equipTheme(theme.id);
         };
 
         return (
@@ -269,31 +234,15 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
               </div>
               <div>
                 <div className="font-bold text-lg">{theme.name}</div>
-                {!isUnlocked && (
-                  <div className="font-semibold text-sm" style={{ color: activeTheme.accentColor }}>
-                    {theme.cost} ◆
-                  </div>
-                )}
               </div>
             </div>
 
-            {isEquipped ? (
+            {isEquipped && (
               <div
                 className="flex items-center justify-center w-10 h-10 rounded-full shrink-0"
                 style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
               >
                 <Check className="w-5 h-5" />
-              </div>
-            ) : isUnlocked ? null : (
-              <div
-                className="relative flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm shrink-0"
-                style={{
-                  backgroundColor: canAfford ? activeTheme.accentColor : activeTheme.foregroundColor,
-                  color: canAfford ? activeTheme.backgroundColor : activeTheme.textColor,
-                  opacity: canAfford ? 1 : 0.5,
-                }}
-              >
-                {canAfford ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
               </div>
             )}
           </motion.div>
@@ -339,17 +288,6 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
           transition={{ duration: 0.35, ease: 'easeOut', delay: 0.05 }}
         >
           LOADOUT
-        </motion.div>
-
-        <motion.div
-          className="flex items-center font-bold px-4 py-2 rounded-full"
-          style={{ color: activeTheme.accentColor, backgroundColor: activeTheme.foregroundColor }}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.35, ease: 'easeOut', delay: 0.1 }}
-        >
-          <span className="mr-1">{coins}</span>
-          <span className="-mt-1">◆</span>
         </motion.div>
       </div>
 
@@ -404,7 +342,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
           className="text-center text-xs font-black tracking-widest py-1 shrink-0"
           style={{ opacity: 0.3, color: activeTheme.textColor }}
         >
-          ↑ ↓ TO SELECT · ↵ TO EQUIP / UNLOCK
+          ↑ ↓ TO SELECT · ↵ TO EQUIP
         </div>
       )}
 

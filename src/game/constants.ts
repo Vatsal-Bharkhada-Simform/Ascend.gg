@@ -41,12 +41,12 @@ export const DEATH_JITTER_INTENSITY = 10; // pixels of shake
 
 // Shop / Skins
 export const AVAILABLE_SKINS = [
-  { id: 'default', name: 'Classic', cost: 0, color: '#111827' }, // slate-900
-  { id: 'neon', name: 'Neon Green', cost: 50, color: '#10B981' }, // emerald-500
-  { id: 'crimson', name: 'Crimson', cost: 150, color: '#EF4444' }, // red-500
-  { id: 'gold', name: 'Solid Gold', cost: 300, color: '#F59E0B', glow: true }, // amber-500
-  { id: 'amethyst', name: 'Amethyst', cost: 600, color: '#8B5CF6' }, // violet-500
-  { id: 'abyss', name: 'The Abyss', cost: 1000, color: '#000000', glow: true }, // pure black
+  { id: 'default', name: 'Classic', color: '#111827' }, // slate-900
+  { id: 'neon', name: 'Neon Green', color: '#10B981' }, // emerald-500
+  { id: 'crimson', name: 'Crimson', color: '#EF4444' }, // red-500
+  { id: 'gold', name: 'Solid Gold', color: '#F59E0B', glow: true }, // amber-500
+  { id: 'amethyst', name: 'Amethyst', color: '#8B5CF6' }, // violet-500
+  { id: 'abyss', name: 'The Abyss', color: '#000000', glow: true }, // pure black
 ];
 
 // Shop / Themes
@@ -54,7 +54,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'default',
     name: 'Classic Light',
-    cost: 0,
     backgroundColor: '#FFFFFF',
     outOfBoundsColor: '#F3F4F6',
     gateColors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
@@ -65,7 +64,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'dark',
     name: 'Dark Mode',
-    cost: 200,
     backgroundColor: '#222222',
     outOfBoundsColor: '#111111',
     gateColors: ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA', '#F472B6'],
@@ -76,7 +74,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'cyberpunk',
     name: 'Cyberpunk Neon',
-    cost: 500,
     backgroundColor: '#0F172A',
     outOfBoundsColor: '#020617',
     gateColors: ['#06B6D4', '#22C55E', '#EAB308', '#F43F5E', '#D946EF', '#14B8A6'],
@@ -87,7 +84,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'sakura',
     name: 'Sakura Bloom',
-    cost: 300,
     backgroundColor: '#FFF1F2',
     outOfBoundsColor: '#FFE4E6',
     gateColors: ['#FB7185', '#F472B6', '#C084FC', '#FDA4AF', '#F9A8D4', '#E879F9'],
@@ -98,7 +94,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'forest',
     name: 'Deep Forest',
-    cost: 300,
     backgroundColor: '#0C1F17',
     outOfBoundsColor: '#071410',
     gateColors: ['#4ADE80', '#A3E635', '#FACC15', '#22D3EE', '#84CC16', '#2DD4BF'],
@@ -109,7 +104,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'desert',
     name: 'Desert Dune',
-    cost: 350,
     backgroundColor: '#FEF3C7',
     outOfBoundsColor: '#FDE68A',
     gateColors: ['#EA580C', '#B45309', '#DC2626', '#65A30D', '#0891B2', '#9333EA'],
@@ -120,7 +114,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'ocean',
     name: 'Ocean Depths',
-    cost: 350,
     backgroundColor: '#082F49',
     outOfBoundsColor: '#041D30',
     gateColors: ['#38BDF8', '#2DD4BF', '#818CF8', '#67E8F9', '#4ADE80', '#A78BFA'],
@@ -131,7 +124,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'sunset',
     name: 'Sunset Blvd',
-    cost: 400,
     backgroundColor: '#1E1B2E',
     outOfBoundsColor: '#141225',
     gateColors: ['#FB923C', '#F472B6', '#FBBF24', '#F87171', '#E879F9', '#FCA5A5'],
@@ -142,7 +134,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'mono',
     name: 'Monochrome',
-    cost: 250,
     backgroundColor: '#FAFAFA',
     outOfBoundsColor: '#E5E5E5',
     gateColors: ['#171717', '#404040', '#525252', '#737373', '#A3A3A3', '#D4D4D4'],
@@ -153,7 +144,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'candy',
     name: 'Candy Pop',
-    cost: 450,
     backgroundColor: '#FDF4FF',
     outOfBoundsColor: '#FAE8FF',
     gateColors: ['#F97316', '#22D3EE', '#A855F7', '#FACC15', '#F43F5E', '#4ADE80'],
@@ -164,7 +154,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'terminal',
     name: 'Terminal Green',
-    cost: 400,
     backgroundColor: '#000000',
     outOfBoundsColor: '#0A0A0A',
     gateColors: ['#22C55E', '#4ADE80', '#86EFAC', '#16A34A', '#15803D', '#166534'],
@@ -175,7 +164,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'pastel-mint',
     name: 'Mint Cream',
-    cost: 300,
     backgroundColor: '#F0FDF9',
     outOfBoundsColor: '#D1FAE9',
     gateColors: ['#5EEAD4', '#A7F3D0', '#FDE68A', '#FCA5A5', '#C4B5FD', '#93C5FD'],
@@ -186,7 +174,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'pastel-lavender',
     name: 'Lavender Fields',
-    cost: 300,
     backgroundColor: '#F5F3FF',
     outOfBoundsColor: '#EDE9FE',
     gateColors: ['#C4B5FD', '#A5B4FC', '#F9A8D4', '#FDE68A', '#93C5FD', '#6EE7B7'],
@@ -197,7 +184,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'pastel-peach',
     name: 'Peach Sorbet',
-    cost: 300,
     backgroundColor: '#FFF7ED',
     outOfBoundsColor: '#FFEDD5',
     gateColors: ['#FDBA74', '#FCA5A5', '#FDE68A', '#BEF264', '#93C5FD', '#F9A8D4'],
@@ -208,7 +194,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'pastel-sky',
     name: 'Baby Blue',
-    cost: 300,
     backgroundColor: '#F0F9FF',
     outOfBoundsColor: '#E0F2FE',
     gateColors: ['#7DD3FC', '#BAE6FD', '#FBCFE8', '#FDE68A', '#C7D2FE', '#A7F3D0'],
@@ -219,7 +204,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'coral-reef',
     name: 'Coral Reef',
-    cost: 350,
     backgroundColor: '#FFF5F2',
     outOfBoundsColor: '#FFE4DE',
     gateColors: ['#FF7F6B', '#FF9F87', '#38BDF8', '#FBBF24', '#2DD4BF', '#F472B6'],
@@ -230,7 +214,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'dark-midnight',
     name: 'Midnight Blue',
-    cost: 400,
     backgroundColor: '#0B1120',
     outOfBoundsColor: '#050810',
     gateColors: ['#3B82F6', '#60A5FA', '#818CF8', '#38BDF8', '#6366F1', '#0EA5E9'],
@@ -241,7 +224,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'dark-crimson',
     name: 'Crimson Void',
-    cost: 400,
     backgroundColor: '#1A0A0A',
     outOfBoundsColor: '#0D0404',
     gateColors: ['#EF4444', '#F87171', '#FB923C', '#FBBF24', '#F43F5E', '#DC2626'],
@@ -252,7 +234,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'dark-obsidian',
     name: 'Obsidian',
-    cost: 350,
     backgroundColor: '#18181B',
     outOfBoundsColor: '#0A0A0B',
     gateColors: ['#71717A', '#A1A1AA', '#D4D4D8', '#FAFAFA', '#52525B', '#E4E4E7'],
@@ -263,7 +244,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'dark-plum',
     name: 'Royal Plum',
-    cost: 450,
     backgroundColor: '#1E1030',
     outOfBoundsColor: '#100819',
     gateColors: ['#C084FC', '#E879F9', '#818CF8', '#F472B6', '#A78BFA', '#D946EF'],
@@ -274,7 +254,6 @@ export const AVAILABLE_THEMES = [
   {
     id: 'dark-amber',
     name: 'Amber Ember',
-    cost: 400,
     backgroundColor: '#1C1410',
     outOfBoundsColor: '#0E0A08',
     gateColors: ['#F59E0B', '#FBBF24', '#F97316', '#EF4444', '#EAB308', '#D97706'],

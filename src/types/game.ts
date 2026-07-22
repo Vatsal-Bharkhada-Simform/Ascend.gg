@@ -48,7 +48,6 @@ export interface RunState {
 export interface Skin {
   id: string;
   name: string;
-  cost: number;
   colorway?: string; // left for backwards compatibility if needed
   color?: string; // standardizing with constants
   glow?: boolean;
@@ -57,7 +56,6 @@ export interface Skin {
 export interface Theme {
   id: string;
   name: string;
-  cost: number;
   backgroundColor: string;
   outOfBoundsColor: string;
   gateColors: string[];
@@ -68,10 +66,7 @@ export interface Theme {
 
 export interface SaveData {
   bestScore: number;
-  coins: number;
-  unlockedSkinIds: string[];
   equippedSkinId: string;
-  unlockedThemeIds: string[];
   equippedThemeId: string;
   controlMode: 'touch' | 'keyboard';
   muted: boolean;
