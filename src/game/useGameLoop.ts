@@ -14,6 +14,7 @@ const MAX_ACCUMULATOR = 0.1; // Prevent death spiral on long lags
 export const useGameLoop = (
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   equippedSkinId: string,
+  equippedThemeId: string,
   onGameOver: (score: number) => void
 ) => {
   const stateRef = useRef<RunState>({
@@ -161,7 +162,7 @@ export const useGameLoop = (
     // Render using the interpolated/latest state
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      renderGame(ctx, state, width, height, dpr, playAreaLeft, playAreaRight, equippedSkinId);
+      renderGame(ctx, state, width, height, dpr, playAreaLeft, playAreaRight, equippedSkinId, equippedThemeId);
     }
 
     // Update HUD overlay safely to avoid React re-renders every frame
@@ -179,7 +180,7 @@ export const useGameLoop = (
         if (state.multiplier > 1) {
           multiplierElement.className = 'text-2xl font-bold text-amber-400 drop-shadow-md transition-all';
         } else {
-          multiplierElement.className = 'text-xl font-bold text-gray-400 opacity-50 transition-all';
+          multiplierElement.className = 'text-xl font-bold opacity-50 transition-all';
         }
       }
     }
@@ -199,7 +200,7 @@ export const useGameLoop = (
     }
 
     requestRef.current = requestAnimationFrame(loop);
-  }, [canvasRef, onGameOver, equippedSkinId]);
+  }, [canvasRef, onGameOver, equippedSkinId, equippedThemeId]);
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(loop);

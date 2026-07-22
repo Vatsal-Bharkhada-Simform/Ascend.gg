@@ -26,7 +26,7 @@ export const BASE_GATE_SPACING = 400;
 
 // Combo / Scoring
 export const MAX_MULTIPLIER = 3;
-export const COMBO_TIME_LIMIT = 2.5; // seconds to reach next gate before multiplier resets
+export const COMBO_TIME_LIMIT = 2; // seconds to reach next gate before multiplier resets
 
 // Colors & Visuals
 export const BACKGROUND_COLOR = '#FFFFFF';
@@ -52,7 +52,44 @@ export const AVAILABLE_SKINS = [
   { id: 'default', name: 'Classic', cost: 0, color: '#111827' }, // slate-900
   { id: 'neon', name: 'Neon Green', cost: 50, color: '#10B981' }, // emerald-500
   { id: 'crimson', name: 'Crimson', cost: 150, color: '#EF4444' }, // red-500
-  { id: 'gold', name: 'Solid Gold', cost: 300, color: '#F59E0B' }, // amber-500
+  { id: 'gold', name: 'Solid Gold', cost: 300, color: '#F59E0B', glow: true }, // amber-500
   { id: 'amethyst', name: 'Amethyst', cost: 600, color: '#8B5CF6' }, // violet-500
-  { id: 'abyss', name: 'The Abyss', cost: 1000, color: '#000000' }, // pure black
+  { id: 'abyss', name: 'The Abyss', cost: 1000, color: '#000000', glow: true }, // pure black
+];
+
+// Shop / Themes
+export const AVAILABLE_THEMES = [
+  {
+    id: 'default',
+    name: 'Classic Light',
+    cost: 0,
+    backgroundColor: '#FFFFFF',
+    outOfBoundsColor: '#F3F4F6', // gray-100
+    gateColors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
+    foregroundColor: '#F9FAFB', // gray-50
+    accentColor: '#F59E0B', // amber-500
+    textColor: '#111827', // gray-900
+  },
+  {
+    id: 'dark',
+    name: 'Dark Mode',
+    cost: 200,
+    backgroundColor: '#222222', // gray-800
+    outOfBoundsColor: '#111111', // gray-900
+    gateColors: ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA', '#F472B6'],
+    foregroundColor: '#333333', // slightly lighter than bg
+    accentColor: '#FBBF24', // amber-400
+    textColor: '#F3F4F6', // gray-100
+  },
+  {
+    id: 'cyberpunk',
+    name: 'Cyberpunk Neon',
+    cost: 500,
+    backgroundColor: '#0F172A', // slate-900
+    outOfBoundsColor: '#020617', // slate-950
+    gateColors: ['#06B6D4', '#22C55E', '#EAB308', '#F43F5E', '#D946EF', '#14B8A6'],
+    foregroundColor: '#1E293B', // slate-800
+    accentColor: '#F43F5E', // rose-500
+    textColor: '#E2E8F0', // slate-200
+  },
 ];

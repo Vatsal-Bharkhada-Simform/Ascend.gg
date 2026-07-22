@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useGameLoop } from '../game/useGameLoop';
 import { useMetaStore } from '../store/metaStore';
+import { AVAILABLE_THEMES } from '../game/constants';
 
 interface Props {
   onGameOver: (score: number) => void;
@@ -8,9 +9,10 @@ interface Props {
 
 export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { controlMode, equippedSkinId } = useMetaStore();
+  const { controlMode, equippedSkinId, equippedThemeId } = useMetaStore();
+  const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
   
-  const { handleInput } = useGameLoop(canvasRef, equippedSkinId, _onGameOver);
+  const { handleInput } = useGameLoop(canvasRef, equippedSkinId, equippedThemeId, _onGameOver);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     // Disable touch controls if in keyboard mode
@@ -47,16 +49,19 @@ export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
 
   return (
     <div 
-      className={`absolute inset-0 bg-white ${controlMode === 'touch' ? 'cursor-pointer' : ''}`}
+      className={`absolute inset-0 ${controlMode === 'touch' ? 'cursor-pointer' : ''}`}
       onPointerDown={handlePointerDown}
     >
       {/* HUD overlay */}
-      <div className="absolute top-12 left-0 right-0 flex flex-col items-center z-10 pointer-events-none gap-2">
-        <div id="hud-score" className="text-4xl font-black text-gray-900 drop-shadow-md">0</div>
+      <div className="absolute top-8 left-0 right-0 flex flex-col items-center pointer-events-none z-10">
+        <div id="hud-score" className="text-6xl font-black drop-shadow-sm">0</div>
         
         <div className="flex flex-col items-center gap-1">
-          <div id="hud-multiplier" className="text-xl font-bold text-gray-400 opacity-50 transition-all">x1</div>
-          <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+          <div id="hud-multiplier" className="text-xl font-bold opacity-50 transition-all">x1</div>
+          <div 
+            className="w-24 h-2 rounded-full overflow-hidden shadow-inner"
+            style={{ backgroundColor: activeTheme.foregroundColor }}
+          >
             <div 
               id="hud-timer-bar" 
               className="h-full bg-emerald-500 rounded-full transition-all duration-[16ms] ease-linear"

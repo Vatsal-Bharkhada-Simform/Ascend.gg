@@ -40,7 +40,21 @@ export interface Skin {
   id: string;
   name: string;
   cost: number;
-  colorway: string;
+  colorway?: string; // left for backwards compatibility if needed
+  color?: string; // standardizing with constants
+  glow?: boolean;
+}
+
+export interface Theme {
+  id: string;
+  name: string;
+  cost: number;
+  backgroundColor: string;
+  outOfBoundsColor: string;
+  gateColors: string[];
+  foregroundColor: string;
+  accentColor: string;
+  textColor: string;
 }
 
 export interface SaveData {
@@ -48,5 +62,7 @@ export interface SaveData {
   coins: number;
   unlockedSkinIds: string[];
   equippedSkinId: string;
+  unlockedThemeIds: string[];
+  equippedThemeId: string;
   controlMode: 'touch' | 'keyboard';
 }

@@ -7,6 +7,8 @@ interface MetaStore extends SaveData {
   addCoins: (amount: number) => void;
   unlockSkin: (id: string, cost: number) => void;
   equipSkin: (id: string) => void;
+  unlockTheme: (id: string, cost: number) => void;
+  equipTheme: (id: string) => void;
   setControlMode: (mode: 'touch' | 'keyboard') => void;
 }
 
@@ -22,6 +24,8 @@ export const useMetaStore = create<MetaStore>()(
       coins: 0,
       unlockedSkinIds: ['default'],
       equippedSkinId: 'default',
+      unlockedThemeIds: ['default'],
+      equippedThemeId: 'default',
       controlMode: defaultControlMode,
 
       setBestScore: (score) =>
@@ -42,6 +46,19 @@ export const useMetaStore = create<MetaStore>()(
         }),
 
       equipSkin: (id) => set({ equippedSkinId: id }),
+
+      unlockTheme: (id, cost) =>
+        set((state) => {
+          if (state.unlockedThemeIds.includes(id) || state.coins < cost) {
+            return state;
+          }
+          return {
+            coins: state.coins - cost,
+            unlockedThemeIds: [...state.unlockedThemeIds, id],
+          };
+        }),
+
+      equipTheme: (id) => set({ equippedThemeId: id }),
 
       setControlMode: (mode) => set({ controlMode: mode }),
     }),

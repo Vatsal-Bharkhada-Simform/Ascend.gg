@@ -4,13 +4,16 @@ import { GameCanvas } from './components/GameCanvas';
 import { GameOverScreen } from './components/GameOverScreen';
 import { ShopScreen } from './components/ShopScreen';
 import { useMetaStore } from './store/metaStore';
+import { AVAILABLE_THEMES } from './game/constants';
 
 type Screen = 'menu' | 'game' | 'gameOver' | 'shop';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('menu');
   const [lastScore, setLastScore] = useState(0);
-  const { setBestScore, addCoins } = useMetaStore();
+  const { setBestScore, addCoins, equippedThemeId } = useMetaStore();
+
+  const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
 
   const handleGameOver = (score: number) => {
     setLastScore(score);
@@ -23,7 +26,10 @@ function App() {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full overflow-hidden bg-white select-none touch-none">
+    <div 
+      className="fixed inset-0 w-full h-full overflow-hidden select-none touch-none transition-colors duration-300"
+      style={{ backgroundColor: activeTheme.backgroundColor, color: activeTheme.textColor }}
+    >
       {screen === 'menu' && (
         <MenuScreen 
           onPlay={() => setScreen('game')} 

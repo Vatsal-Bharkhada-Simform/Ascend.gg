@@ -1,5 +1,5 @@
 import type { RunState } from '../types/game';
-import { BACKGROUND_COLOR, OUT_OF_BOUNDS_COLOR, DIAMOND_COLOR, DIAMOND_RADIUS, GATE_COLORS, GATE_HEIGHT, DEATH_JITTER_INTENSITY, AVAILABLE_SKINS } from './constants';
+import { DIAMOND_COLOR, DIAMOND_RADIUS, GATE_HEIGHT, DEATH_JITTER_INTENSITY, AVAILABLE_SKINS, AVAILABLE_THEMES } from './constants';
 import { clearCanvas } from '../utils/canvas';
 
 export const renderGame = (
@@ -10,10 +10,13 @@ export const renderGame = (
   dpr: number,
   playAreaLeft: number,
   playAreaRight: number,
-  equippedSkinId: string
+  equippedSkinId: string,
+  equippedThemeId: string
 ) => {
+  const theme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
+  
   // Clear the screen
-  clearCanvas(ctx, width, height, BACKGROUND_COLOR);
+  clearCanvas(ctx, width, height, theme.backgroundColor);
 
   const { diamond, gates, cameraY, deathTime } = state;
 
@@ -21,12 +24,12 @@ export const renderGame = (
   
   if (deathTime !== undefined) {
     const intensity = DEATH_JITTER_INTENSITY;
-    // A quick hack for random jitter (since we don't pass time to renderGame, we just random jitter every frame)
+    // A quick hack for random jitter
     ctx.translate((Math.random() - 0.5) * intensity * dpr, (Math.random() - 0.5) * intensity * dpr);
   }
   
   // Draw Out-of-Bounds Areas
-  ctx.fillStyle = OUT_OF_BOUNDS_COLOR;
+  ctx.fillStyle = theme.outOfBoundsColor;
   if (playAreaLeft > 0) {
     ctx.fillRect(0, 0, playAreaLeft * dpr, height);
   }
@@ -38,7 +41,7 @@ export const renderGame = (
   gates.forEach(gate => {
     // Only draw if on screen
     if (gate.y > cameraY - height && gate.y < cameraY + height) {
-      ctx.fillStyle = GATE_COLORS[gate.colorIndex % GATE_COLORS.length];
+      ctx.fillStyle = theme.gateColors[gate.colorIndex % theme.gateColors.length];
       const screenY = (gate.y - cameraY) * dpr;
       const screenH = GATE_HEIGHT * dpr;
       const gapStartX = gate.gapStart * dpr;
@@ -60,7 +63,7 @@ export const renderGame = (
       const screenY = (hazard.y - cameraY) * dpr;
       const screenS = hazard.size * dpr;
 
-      ctx.fillStyle = GATE_COLORS[hazard.colorIndex % GATE_COLORS.length];
+      ctx.fillStyle = theme.gateColors[hazard.colorIndex % theme.gateColors.length];
       ctx.fillRect(screenX, screenY, screenS, screenS);
     }
   });
@@ -71,6 +74,7 @@ export const renderGame = (
   const radius = DIAMOND_RADIUS * dpr;
 
   // Draw the diamond
+  ctx.save();
   ctx.translate(screenX, screenY);
   
   // Add a slight rotation based on horizontal velocity for flair
@@ -84,11 +88,17 @@ export const renderGame = (
   ctx.lineTo(-radius, 0);
   ctx.closePath();
 
-  // Determine diamond color based on equipped skin
-  const skinColor = AVAILABLE_SKINS.find(s => s.id === equippedSkinId)?.color || DIAMOND_COLOR;
-  ctx.fillStyle = skinColor;
+  // Determine diamond color and glow based on equipped skin
+  const skin = AVAILABLE_SKINS.find(s => s.id === equippedSkinId) || AVAILABLE_SKINS[0];
+  ctx.fillStyle = skin.color || DIAMOND_COLOR;
+  
+  if (skin.glow) {
+    ctx.shadowBlur = 20 * dpr;
+    ctx.shadowColor = skin.color || DIAMOND_COLOR;
+  }
   
   ctx.fill();
 
-  ctx.restore();
+  ctx.restore(); // restores the translation and the shadow
+  ctx.restore(); // restores the death jitter translation
 };
