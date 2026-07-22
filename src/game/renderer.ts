@@ -1,5 +1,5 @@
 import type { RunState } from '../types/game';
-import { BACKGROUND_COLOR, OUT_OF_BOUNDS_COLOR, DIAMOND_COLOR, DIAMOND_RADIUS, GATE_COLORS, GATE_HEIGHT, DEATH_JITTER_INTENSITY } from './constants';
+import { BACKGROUND_COLOR, OUT_OF_BOUNDS_COLOR, DIAMOND_COLOR, DIAMOND_RADIUS, GATE_COLORS, GATE_HEIGHT, DEATH_JITTER_INTENSITY, AVAILABLE_SKINS } from './constants';
 import { clearCanvas } from '../utils/canvas';
 
 export const renderGame = (
@@ -9,7 +9,8 @@ export const renderGame = (
   height: number,
   dpr: number,
   playAreaLeft: number,
-  playAreaRight: number
+  playAreaRight: number,
+  equippedSkinId: string
 ) => {
   // Clear the screen
   clearCanvas(ctx, width, height, BACKGROUND_COLOR);
@@ -83,7 +84,10 @@ export const renderGame = (
   ctx.lineTo(-radius, 0);
   ctx.closePath();
 
-  ctx.fillStyle = DIAMOND_COLOR;
+  // Determine diamond color based on equipped skin
+  const skinColor = AVAILABLE_SKINS.find(s => s.id === equippedSkinId)?.color || DIAMOND_COLOR;
+  ctx.fillStyle = skinColor;
+  
   ctx.fill();
 
   ctx.restore();

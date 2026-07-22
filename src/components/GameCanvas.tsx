@@ -8,9 +8,9 @@ interface Props {
 
 export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { controlMode, equippedSkinId } = useMetaStore();
   
-  const { handleInput } = useGameLoop(canvasRef, _onGameOver);
-  const { controlMode } = useMetaStore();
+  const { handleInput } = useGameLoop(canvasRef, equippedSkinId, _onGameOver);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     // Disable touch controls if in keyboard mode

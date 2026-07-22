@@ -46,3 +46,13 @@ export const COLOR_CHANGE_INTERVAL = 10; // Change color every 10 points
 // Death Animation
 export const DEATH_JITTER_DURATION = 0.5; // seconds
 export const DEATH_JITTER_INTENSITY = 10; // pixels of shake
+
+// Shop / Skins
+export const AVAILABLE_SKINS = [
+  { id: 'default', name: 'Classic', cost: 0, color: '#111827' }, // slate-900
+  { id: 'neon', name: 'Neon Green', cost: 50, color: '#10B981' }, // emerald-500
+  { id: 'crimson', name: 'Crimson', cost: 150, color: '#EF4444' }, // red-500
+  { id: 'gold', name: 'Solid Gold', cost: 300, color: '#F59E0B' }, // amber-500
+  { id: 'amethyst', name: 'Amethyst', cost: 600, color: '#8B5CF6' }, // violet-500
+  { id: 'abyss', name: 'The Abyss', cost: 1000, color: '#000000' }, // pure black
+];

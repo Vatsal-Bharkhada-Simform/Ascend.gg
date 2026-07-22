@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMetaStore } from '../store/metaStore';
 import { ChevronLeft, Check, Lock } from 'lucide-react';
+import { AVAILABLE_SKINS } from '../game/constants';
 
 interface Props {
   onBack: () => void;
@@ -8,13 +9,6 @@ interface Props {
 
 export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   const { coins, unlockedSkinIds, equippedSkinId, equipSkin, unlockSkin } = useMetaStore();
-
-  // Placeholder skins for now
-  const SKINS = [
-    { id: 'default', name: 'Classic', cost: 0, color: '#111827' },
-    { id: 'neon', name: 'Neon', cost: 100, color: '#10B981' },
-    { id: 'gold', name: 'Gold', cost: 500, color: '#F59E0B' },
-  ];
 
   return (
     <div className="absolute inset-0 flex flex-col bg-white text-gray-900">
@@ -33,7 +27,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-4">
-        {SKINS.map((skin) => {
+        {AVAILABLE_SKINS.map((skin) => {
           const isUnlocked = unlockedSkinIds.includes(skin.id);
           const isEquipped = equippedSkinId === skin.id;
           const canAfford = coins >= skin.cost;
@@ -73,7 +67,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
                 </button>
               ) : (
                 <button
-                  onClick={() => canAfford && unlockSkin(skin.id)}
+                  onClick={() => canAfford && unlockSkin(skin.id, skin.cost)}
                   disabled={!canAfford}
                   className={`flex items-center px-6 py-2 rounded-full font-bold text-sm transition-transform ${
                     canAfford
