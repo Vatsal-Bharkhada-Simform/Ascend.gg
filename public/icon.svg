@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Minimalist background (Slate 900) -->
+  <rect width="512" height="512" rx="112" fill="#111827" />
+  
+  <g transform="translate(256, 256) scale(1.6) translate(-256, -211)">
+    <!-- Upward chevrons (Amber 500) indicating ascent -->
+    <path d="M192 180 L256 116 L320 180" fill="none" stroke="#F59E0B" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
+    <path d="M160 212 L256 116 L352 212" fill="none" stroke="#F59E0B" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" opacity="0.1"/>
+    
+    <!-- The player diamond (Amber 500) -->
+    <rect x="206" y="206" width="100" height="100" fill="#F59E0B" transform="rotate(45 256 256)" />
+  </g>
+</svg>

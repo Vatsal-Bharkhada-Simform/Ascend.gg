@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import type { RunState } from '../types/game';
 import { updatePhysics, applyThrust, handleWallCollision } from './physics';
 import { renderGame } from './renderer';
@@ -36,6 +36,8 @@ export const useGameLoop = (
   const lastTimeRef = useRef<number>(0);
   const accumulatorRef = useRef<number>(0);
   const isGameOver = useRef<boolean>(false);
+  const isIdleRef = useRef<boolean>(true);
+  const [isIdle, setIsIdle] = useState(true);
 
   // Initialize once
   useEffect(() => {
@@ -60,6 +62,8 @@ export const useGameLoop = (
     stateRef.current.deathTime = undefined;
     stateRef.current.particles = [];
     isGameOver.current = false;
+    isIdleRef.current = true;
+    setIsIdle(true);
   }, []);
 
   const loop = useCallback((time: number) => {
@@ -73,7 +77,12 @@ export const useGameLoop = (
     lastTimeRef.current = time;
 
     if (dt > MAX_ACCUMULATOR) dt = MAX_ACCUMULATOR;
-    accumulatorRef.current += dt;
+    
+    if (isIdleRef.current) {
+      accumulatorRef.current = 0;
+    } else {
+      accumulatorRef.current += dt;
+    }
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -106,7 +115,7 @@ export const useGameLoop = (
         }
         accumulatorRef.current -= FIXED_TIMESTEP;
       }
-    } else {
+    } else if (!isIdleRef.current) {
       // Fixed timestep physics update
       while (accumulatorRef.current >= FIXED_TIMESTEP) {
         // Combo Timer Logic
@@ -229,11 +238,17 @@ export const useGameLoop = (
   const handleInput = useCallback((side: 'left' | 'right') => {
     initAudio();
     if (isGameOver.current || stateRef.current.deathTime !== undefined) return;
+    
+    if (isIdleRef.current) {
+      isIdleRef.current = false;
+      setIsIdle(false);
+    }
+    
     applyThrust(stateRef.current.diamond, side);
     playThrust();
   }, []);
 
-  return { handleInput };
+  return { handleInput, isIdle };
 };
 
 function spawnParticles(state: RunState) {

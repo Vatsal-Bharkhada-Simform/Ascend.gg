@@ -18,7 +18,12 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
-          // Icons will be added in Phase 7
+          {
+            src: 'icon.svg',
+            sizes: '192x192 512x512',
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
+          }
         ]
       }
     })

@@ -91,10 +91,6 @@ export const renderGame = (
   // Draw the diamond
   ctx.save();
   ctx.translate(screenX, screenY);
-  
-  // Add a slight rotation based on horizontal velocity for flair
-  const rotation = (diamond.velocity.x / 1000) * Math.PI;
-  ctx.rotate(rotation);
 
   ctx.beginPath();
   ctx.moveTo(0, -radius);
