@@ -1,14 +1,14 @@
 // Physics & Math Constants
 export const GRAVITY = 1700; // pixels per second squared
 export const THRUST_X = 120; // instant horizontal velocity on tap
-export const THRUST_Y = 600; // instant vertical velocity on tap
+export const THRUST_Y = 700; // instant vertical velocity on tap
 export const BOUNCE_DAMPING = 0.8; // retaining 80% horizontal speed on wall hit
 
 // Game Bounds
-export const DIAMOND_RADIUS = 12; // visual and collision radius
+export const DIAMOND_RADIUS = 16; // visual and collision radius
 export const GATE_HEIGHT = 24;
 export const HAZARD_SIZE = 24;
-export const FOLLOW_MARGIN = 400; // how far from top the camera follows the player
+export const FOLLOW_MARGIN = 450; // how far from top the camera follows the player
 export const BASE_GAP_WIDTH = 120; // initial gap width
 export const MIN_GAP_WIDTH = 60; // smallest possible gap
 export const MAX_SCORE = 100; // point where difficulty caps out

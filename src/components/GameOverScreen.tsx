@@ -55,7 +55,7 @@ export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop
         </div>
 
         <div className="flex flex-col items-center">
-          <div className="text-8xl font-black tracking-tight">{score}</div>
+          <div className="text-8xl font-black tracking">{score}</div>
           <div className="font-medium mt-2" style={{ opacity: 0.7 }}>
             BEST: {Math.max(score, bestScore)}
           </div>
