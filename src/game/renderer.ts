@@ -49,6 +49,19 @@ export const renderGame = (
     }
   });
 
+  // Draw Hazards
+  state.hazards.forEach(hazard => {
+    // Only draw if on screen
+    if (hazard.y > cameraY - height && hazard.y < cameraY + height) {
+      const screenX = hazard.x * dpr;
+      const screenY = (hazard.y - cameraY) * dpr;
+      const screenS = hazard.size * dpr;
+
+      ctx.fillStyle = GATE_COLORS[hazard.colorIndex % GATE_COLORS.length];
+      ctx.fillRect(screenX, screenY, screenS, screenS);
+    }
+  });
+
   // Transform world coordinates to screen coordinates
   const screenX = diamond.position.x * dpr;
   const screenY = (diamond.position.y - cameraY) * dpr;

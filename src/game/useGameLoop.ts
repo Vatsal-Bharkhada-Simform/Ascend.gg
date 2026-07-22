@@ -4,7 +4,7 @@ import { updatePhysics, applyThrust, handleWallCollision } from './physics';
 import { renderGame } from './renderer';
 import { resizeCanvas } from '../utils/canvas';
 import { generateInitialGates, generateNextGate, resetGateGenerator } from './gateGenerator';
-import { checkGateCollision, checkGateClear } from './collision';
+import { checkGateCollision, checkGateClear, checkHazardCollision } from './collision';
 import { updateCamera } from './camera';
 import { MAX_PLAY_WIDTH } from './constants';
 
@@ -44,7 +44,9 @@ export const useGameLoop = (
     const playAreaRight = playAreaLeft + playWidth;
 
     const startY = logicalHeight / 2;
-    stateRef.current.gates = generateInitialGates(5, playAreaLeft, playAreaRight, startY);
+    const initialChunks = generateInitialGates(5, playAreaLeft, playAreaRight, startY);
+    stateRef.current.gates = initialChunks.map(c => c.gate);
+    stateRef.current.hazards = initialChunks.flatMap(c => c.hazards);
     stateRef.current.cameraY = startY - logicalHeight / 2;
     // reset player to exactly center
     stateRef.current.diamond.position = { x: logicalWidth / 2, y: startY };
@@ -84,6 +86,13 @@ export const useGameLoop = (
       const previousY = updatePhysics(state, FIXED_TIMESTEP);
       handleWallCollision(state.diamond, playAreaLeft, playAreaRight);
 
+      // Check Hazard Collisions
+      if (checkHazardCollision(state.diamond, state.hazards)) {
+        isGameOver.current = true;
+        onGameOver(state.score);
+        return;
+      }
+
       // Check Gate Collisions
       for (const gate of state.gates) {
         if (checkGateCollision(state.diamond, previousY, gate)) {
@@ -98,12 +107,16 @@ export const useGameLoop = (
 
           // Generate new gate above the highest one
           const highestGateY = Math.min(...state.gates.map(g => g.y));
-          state.gates.push(generateNextGate(highestGateY, playAreaLeft, playAreaRight, state.score));
+          
+          const newChunk = generateNextGate(highestGateY, highestGateY, playAreaLeft, playAreaRight, state.score);
+          state.gates.push(newChunk.gate);
+          state.hazards.push(...newChunk.hazards);
         }
       }
 
-      // Cleanup old gates that are way below the camera
+      // Cleanup old gates and hazards that are way below the camera
       state.gates = state.gates.filter(g => g.y < state.cameraY + logicalHeight + 500);
+      state.hazards = state.hazards.filter(h => h.y < state.cameraY + logicalHeight + 500);
 
       accumulatorRef.current -= FIXED_TIMESTEP;
     }

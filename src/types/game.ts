@@ -21,6 +21,7 @@ export interface Hazard {
   x: number;
   y: number;
   size: number;
+  colorIndex: number;
 }
 
 export interface RunState {

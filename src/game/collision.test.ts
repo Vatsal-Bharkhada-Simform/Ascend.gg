@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkGateCollision, checkGateClear } from './collision';
+import { checkGateCollision, checkGateClear, checkHazardCollision } from './collision';
 import type { DiamondState, Gate } from '../types/game';
 import { GATE_HEIGHT } from './constants';
 
@@ -88,6 +88,37 @@ describe('Collision Engine', () => {
 
       // previous was above
       expect(checkGateClear(diamond, 90, gate)).toBe(false);
+    });
+  });
+
+  describe('checkHazardCollision', () => {
+    const hazards = [
+      { id: 1, x: 100, y: 100, size: 16, colorIndex: 0 },
+      { id: 2, x: 200, y: 200, size: 16, colorIndex: 0 }
+    ];
+
+    it('returns true if diamond overlaps a hazard', () => {
+      const diamond: DiamondState = {
+        position: { x: 100 + 8, y: 100 + 8 }, // Center of first hazard
+        velocity: { x: 0, y: 0 }
+      };
+      expect(checkHazardCollision(diamond, hazards)).toBe(true);
+    });
+
+    it('returns true if diamond touches hazard edge', () => {
+      const diamond: DiamondState = {
+        position: { x: 100 - 11, y: 100 + 8 }, // Just barely touching left edge (radius 12)
+        velocity: { x: 0, y: 0 }
+      };
+      expect(checkHazardCollision(diamond, hazards)).toBe(true);
+    });
+
+    it('returns false if diamond is far away', () => {
+      const diamond: DiamondState = {
+        position: { x: 50, y: 50 },
+        velocity: { x: 0, y: 0 }
+      };
+      expect(checkHazardCollision(diamond, hazards)).toBe(false);
     });
   });
 });

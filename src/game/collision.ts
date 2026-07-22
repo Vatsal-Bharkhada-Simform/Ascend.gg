@@ -1,4 +1,4 @@
-import type { DiamondState, Gate } from '../types/game';
+import type { DiamondState, Gate, Hazard } from '../types/game';
 import { DIAMOND_RADIUS, GATE_HEIGHT } from './constants';
 
 /**
@@ -65,6 +65,34 @@ export const checkGateClear = (
     
     if (leftEdge >= gate.gapStart && rightEdge <= gate.gapEnd) {
       return true;
+    }
+  }
+
+  return false;
+};
+
+export const checkHazardCollision = (
+  diamond: DiamondState,
+  hazards: Hazard[]
+): boolean => {
+  // Simple AABB vs Circle check
+  const dx = diamond.position.x;
+  const dy = diamond.position.y;
+  const r = DIAMOND_RADIUS;
+
+  for (const hazard of hazards) {
+    // Find the closest point on the hazard rectangle to the diamond center
+    // Hazard (x,y) is top-left corner
+    const closestX = Math.max(hazard.x, Math.min(dx, hazard.x + hazard.size));
+    const closestY = Math.max(hazard.y, Math.min(dy, hazard.y + hazard.size));
+
+    // Calculate distance from closest point to diamond center
+    const distanceX = dx - closestX;
+    const distanceY = dy - closestY;
+    const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+    if (distanceSquared < r * r) {
+      return true; // Collision
     }
   }
 
