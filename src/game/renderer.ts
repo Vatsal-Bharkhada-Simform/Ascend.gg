@@ -68,6 +68,21 @@ export const renderGame = (
     }
   });
 
+  // Draw Particles
+  state.particles.forEach(p => {
+    const screenX = p.position.x * dpr;
+    const screenY = (p.position.y - cameraY) * dpr;
+    const screenS = p.size * dpr;
+
+    ctx.save();
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = theme.accentColor; // Use theme accent for cool explosion
+    ctx.translate(screenX, screenY);
+    ctx.rotate(p.life * Math.PI * 4); // spin as they die
+    ctx.fillRect(-screenS / 2, -screenS / 2, screenS, screenS);
+    ctx.restore();
+  });
+
   // Transform world coordinates to screen coordinates
   const screenX = diamond.position.x * dpr;
   const screenY = (diamond.position.y - cameraY) * dpr;

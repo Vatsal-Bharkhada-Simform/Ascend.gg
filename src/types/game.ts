@@ -25,14 +25,23 @@ export interface Hazard {
   colorIndex: number;
 }
 
+export interface Particle {
+  position: Vector2;
+  velocity: Vector2;
+  color: string;
+  life: number; // 1 to 0
+  size: number;
+}
+
 export interface RunState {
   diamond: DiamondState;
   gates: Gate[];
   hazards: Hazard[];
+  particles: Particle[];
   cameraY: number;
   score: number;
   multiplier: number;
-  comboTimer: number;
+  comboTimer: number; // 0 to 1
   deathTime?: number;
 }
 
@@ -65,4 +74,5 @@ export interface SaveData {
   unlockedThemeIds: string[];
   equippedThemeId: string;
   controlMode: 'touch' | 'keyboard';
+  muted: boolean;
 }

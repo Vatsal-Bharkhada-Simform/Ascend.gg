@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import type { RunState } from '../types/game';
 import { updatePhysics, applyThrust, handleWallCollision } from './physics';
 import { renderGame } from './renderer';
+import { initAudio, playThrust, playScore, playDeath } from '../utils/audio';
 import { resizeCanvas } from '../utils/canvas';
 import { generateInitialGates, generateNextGate, resetGateGenerator } from './gateGenerator';
 import { checkGateCollision, checkGateClear, checkHazardCollision } from './collision';
@@ -24,6 +25,7 @@ export const useGameLoop = (
     },
     gates: [],
     hazards: [],
+    particles: [],
     cameraY: 0,
     score: 0,
     multiplier: 1,
@@ -56,6 +58,7 @@ export const useGameLoop = (
     stateRef.current.multiplier = 1;
     stateRef.current.comboTimer = 0;
     stateRef.current.deathTime = undefined;
+    stateRef.current.particles = [];
     isGameOver.current = false;
   }, []);
 
@@ -93,7 +96,16 @@ export const useGameLoop = (
         onGameOver(state.score);
         return;
       }
-      // Skip physics update if dead, but allow render
+      
+      // Update particles while dying
+      while (accumulatorRef.current >= FIXED_TIMESTEP) {
+        for (const p of state.particles) {
+          p.position.x += p.velocity.x * FIXED_TIMESTEP;
+          p.position.y += p.velocity.y * FIXED_TIMESTEP;
+          p.life -= FIXED_TIMESTEP / DEATH_JITTER_DURATION;
+        }
+        accumulatorRef.current -= FIXED_TIMESTEP;
+      }
     } else {
       // Fixed timestep physics update
       while (accumulatorRef.current >= FIXED_TIMESTEP) {
@@ -112,6 +124,8 @@ export const useGameLoop = (
         // Check Hazard Collisions
         if (checkHazardCollision(state.diamond, state.hazards)) {
           state.deathTime = time;
+          spawnParticles(state);
+          playDeath();
           break;
         }
 
@@ -119,18 +133,21 @@ export const useGameLoop = (
         for (const gate of state.gates) {
           if (checkGateCollision(state.diamond, previousY, gate)) {
             state.deathTime = time;
+            spawnParticles(state);
+            playDeath();
             break;
           }
 
           if (checkGateClear(state.diamond, previousY, gate)) {
             gate.cleared = true;
             
-            // Apply multiplier to score before incrementing it (as requested)
+            // Apply multiplier to score before incrementing it
             state.score += 1 * state.multiplier;
             
             // Increment multiplier and refill timer
             state.multiplier = Math.min(MAX_MULTIPLIER, state.multiplier + 1);
             state.comboTimer = COMBO_TIME_LIMIT;
+            playScore(state.multiplier);
 
             // Generate new gate above the highest one
             const highestGateY = Math.min(...state.gates.map(g => g.y));
@@ -156,6 +173,8 @@ export const useGameLoop = (
       // Death by falling off screen
       if (state.diamond.position.y > state.cameraY + logicalHeight + 50) {
         state.deathTime = time;
+        spawnParticles(state);
+        playDeath();
       }
     }
 
@@ -208,9 +227,28 @@ export const useGameLoop = (
   }, [loop]);
 
   const handleInput = useCallback((side: 'left' | 'right') => {
-    if (isGameOver.current) return;
+    initAudio();
+    if (isGameOver.current || stateRef.current.deathTime !== undefined) return;
     applyThrust(stateRef.current.diamond, side);
+    playThrust();
   }, []);
 
   return { handleInput };
 };
+
+function spawnParticles(state: RunState) {
+  for (let i = 0; i < 15; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 500 + 200;
+    state.particles.push({
+      position: { ...state.diamond.position },
+      velocity: {
+        x: Math.cos(angle) * speed,
+        y: Math.sin(angle) * speed
+      },
+      color: '#FFFFFF', // We can update this in the renderer based on activeTheme
+      life: 1,
+      size: Math.random() * 10 + 5
+    });
+  }
+}

@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useMetaStore } from '../store/metaStore';
 import { ChevronLeft, Check, Lock } from 'lucide-react';
 import { AVAILABLE_SKINS, AVAILABLE_THEMES } from '../game/constants';
+import { motion } from 'framer-motion';
+import { initAudio, playClick } from '../utils/audio';
 
 interface Props {
   onBack: () => void;
 }
 
 export const ShopScreen: React.FC<Props> = ({ onBack }) => {
-  const { 
-    coins, 
+  const {
+    coins,
     unlockedSkinIds, equippedSkinId, equipSkin, unlockSkin,
     unlockedThemeIds, equippedThemeId, equipTheme, unlockTheme
   } = useMetaStore();
@@ -18,18 +20,40 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
 
   const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
 
+  const handleBack = () => {
+    initAudio();
+    playClick();
+    onBack();
+  };
+
+  const handleTabChange = (tab: 'skins' | 'themes') => {
+    initAudio();
+    playClick();
+    setActiveTab(tab);
+  };
+
   const renderSkins = () => (
-    <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-4">
+    <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-4 max-w-lg mx-auto w-full">
       {AVAILABLE_SKINS.map((skin) => {
         const isUnlocked = unlockedSkinIds.includes(skin.id);
         const isEquipped = equippedSkinId === skin.id;
         const canAfford = coins >= skin.cost;
 
+        const handleSkinAction = () => {
+          initAudio();
+          playClick();
+          if (isUnlocked) {
+            equipSkin(skin.id);
+          } else if (canAfford) {
+            unlockSkin(skin.id, skin.cost);
+          }
+        };
+
         return (
           <div
             key={skin.id}
             className="flex items-center justify-between p-4 rounded-2xl border-2 transition-all"
-            style={{ 
+            style={{
               borderColor: isEquipped ? activeTheme.accentColor : activeTheme.foregroundColor,
               backgroundColor: isEquipped ? activeTheme.foregroundColor : 'transparent'
             }}
@@ -50,7 +74,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
             </div>
 
             {isEquipped ? (
-              <div 
+              <div
                 className="flex items-center font-bold px-4 py-2 rounded-full text-sm"
                 style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
               >
@@ -58,7 +82,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
               </div>
             ) : isUnlocked ? (
               <button
-                onClick={() => equipSkin(skin.id)}
+                onClick={handleSkinAction}
                 className="px-6 py-2 rounded-full font-bold text-sm active:scale-95 transition-transform"
                 style={{ backgroundColor: activeTheme.textColor, color: activeTheme.backgroundColor }}
               >
@@ -66,10 +90,10 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
               </button>
             ) : (
               <button
-                onClick={() => canAfford && unlockSkin(skin.id, skin.cost)}
+                onClick={handleSkinAction}
                 disabled={!canAfford}
                 className="flex items-center px-6 py-2 rounded-full font-bold text-sm transition-transform"
-                style={{ 
+                style={{
                   backgroundColor: canAfford ? activeTheme.accentColor : activeTheme.foregroundColor,
                   color: canAfford ? activeTheme.backgroundColor : activeTheme.textColor,
                   opacity: canAfford ? 1 : 0.5,
@@ -88,17 +112,27 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   );
 
   const renderThemes = () => (
-    <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-4">
+    <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-4 max-w-lg mx-auto w-full">
       {AVAILABLE_THEMES.map((theme) => {
         const isUnlocked = unlockedThemeIds.includes(theme.id);
         const isEquipped = equippedThemeId === theme.id;
         const canAfford = coins >= theme.cost;
 
+        const handleThemeAction = () => {
+          initAudio();
+          playClick();
+          if (isUnlocked) {
+            equipTheme(theme.id);
+          } else if (canAfford) {
+            unlockTheme(theme.id, theme.cost);
+          }
+        };
+
         return (
           <div
             key={theme.id}
             className="flex items-center justify-between p-4 rounded-2xl border-2 transition-all"
-            style={{ 
+            style={{
               borderColor: isEquipped ? activeTheme.accentColor : activeTheme.foregroundColor,
               backgroundColor: isEquipped ? activeTheme.foregroundColor : 'transparent'
             }}
@@ -123,7 +157,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
             </div>
 
             {isEquipped ? (
-              <div 
+              <div
                 className="flex items-center font-bold px-4 py-2 rounded-full text-sm"
                 style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
               >
@@ -131,7 +165,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
               </div>
             ) : isUnlocked ? (
               <button
-                onClick={() => equipTheme(theme.id)}
+                onClick={handleThemeAction}
                 className="px-6 py-2 rounded-full font-bold text-sm active:scale-95 transition-transform"
                 style={{ backgroundColor: activeTheme.textColor, color: activeTheme.backgroundColor }}
               >
@@ -139,10 +173,10 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
               </button>
             ) : (
               <button
-                onClick={() => canAfford && unlockTheme(theme.id, theme.cost)}
+                onClick={handleThemeAction}
                 disabled={!canAfford}
                 className="flex items-center px-6 py-2 rounded-full font-bold text-sm transition-transform"
-                style={{ 
+                style={{
                   backgroundColor: canAfford ? activeTheme.accentColor : activeTheme.foregroundColor,
                   color: canAfford ? activeTheme.backgroundColor : activeTheme.textColor,
                   opacity: canAfford ? 1 : 0.5,
@@ -161,18 +195,24 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   );
 
   return (
-    <div className="absolute inset-0 flex flex-col">
-      <div className="flex items-center justify-between p-6 pb-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="absolute inset-0 flex flex-col"
+    >
+      <div className="relative flex items-center justify-between p-6 pb-4">
         <button
-          onClick={onBack}
-          className="p-3 rounded-full transition-colors"
-          style={{ backgroundColor: activeTheme.foregroundColor }}
+          onClick={handleBack}
+          className="p-2 -ml-2 rounded-full transition-colors active:scale-95 justify-self-start"
+          style={{ backgroundColor: activeTheme.foregroundColor, color: activeTheme.textColor }}
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <div className="text-xl font-black">SHOP</div>
-        <div 
-          className="flex items-center font-bold px-4 py-2 rounded-full"
+        <div className="absolute left-1/2 -translate-x-1/2 text-xl font-black">SHOP</div>
+        <div
+          className="flex items-center font-bold px-4 py-2 rounded-full justify-self-end"
           style={{ color: activeTheme.accentColor, backgroundColor: activeTheme.foregroundColor }}
         >
           <span className="mr-1">{coins}</span>
@@ -180,30 +220,32 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="flex px-6 space-x-2 mb-4">
-        <button 
-          onClick={() => setActiveTab('skins')}
-          className="flex-1 py-2 rounded-full font-bold transition-colors"
-          style={{ 
-            backgroundColor: activeTab === 'skins' ? activeTheme.textColor : activeTheme.foregroundColor,
-            color: activeTab === 'skins' ? activeTheme.backgroundColor : activeTheme.textColor
-          }}
-        >
-          SKINS
-        </button>
-        <button 
-          onClick={() => setActiveTab('themes')}
-          className="flex-1 py-2 rounded-full font-bold transition-colors"
-          style={{ 
-            backgroundColor: activeTab === 'themes' ? activeTheme.textColor : activeTheme.foregroundColor,
-            color: activeTab === 'themes' ? activeTheme.backgroundColor : activeTheme.textColor
-          }}
-        >
-          THEMES
-        </button>
+      <div className="flex px-6 mb-4 max-w-lg mx-auto w-full">
+        <div className="flex p-1 rounded-xl w-full" style={{ backgroundColor: activeTheme.foregroundColor }}>
+          <button
+            onClick={() => handleTabChange('skins')}
+            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'skins' ? 'shadow-sm' : 'opacity-70'}`}
+            style={{
+              backgroundColor: activeTab === 'skins' ? activeTheme.backgroundColor : 'transparent',
+              color: activeTheme.textColor
+            }}
+          >
+            SKINS
+          </button>
+          <button
+            onClick={() => handleTabChange('themes')}
+            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${activeTab === 'themes' ? 'shadow-sm' : 'opacity-70'}`}
+            style={{
+              backgroundColor: activeTab === 'themes' ? activeTheme.backgroundColor : 'transparent',
+              color: activeTheme.textColor
+            }}
+          >
+            THEMES
+          </button>
+        </div>
       </div>
 
       {activeTab === 'skins' ? renderSkins() : renderThemes()}
-    </div>
+    </motion.div>
   );
 };

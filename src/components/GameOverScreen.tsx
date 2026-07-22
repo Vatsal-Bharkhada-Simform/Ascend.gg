@@ -2,6 +2,8 @@ import React from 'react';
 import { useMetaStore } from '../store/metaStore';
 import { RotateCcw, Home, ShoppingBag } from 'lucide-react';
 import { AVAILABLE_THEMES } from '../game/constants';
+import { motion } from 'framer-motion';
+import { playClick, initAudio } from '../utils/audio';
 
 interface Props {
   score: number;
@@ -16,8 +18,32 @@ export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop
   const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
   const isNewBest = score > 0 && score >= bestScore;
 
+  const handleHome = () => {
+    initAudio();
+    playClick();
+    onHome();
+  };
+
+  const handleRetry = () => {
+    initAudio();
+    playClick();
+    onRetry();
+  };
+
+  const handleShop = () => {
+    initAudio();
+    playClick();
+    onShop();
+  };
+
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="absolute inset-0 flex flex-col items-center justify-center"
+    >
       <div className="flex flex-col items-center space-y-10 w-full max-w-xs">
         <div className="text-center">
           <h2 className="text-4xl font-black tracking-tight mb-2">GAME OVER</h2>
@@ -29,7 +55,7 @@ export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop
         </div>
 
         <div className="flex flex-col items-center">
-          <div className="text-8xl font-black tracking-tighter">{score}</div>
+          <div className="text-8xl font-black tracking-tight">{score}</div>
           <div className="font-medium mt-2" style={{ opacity: 0.7 }}>
             BEST: {Math.max(score, bestScore)}
           </div>
@@ -37,7 +63,7 @@ export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop
 
         <div className="grid grid-cols-3 gap-4 w-full pt-4">
           <button
-            onClick={onHome}
+            onClick={handleHome}
             className="flex flex-col items-center justify-center p-4 rounded-2xl transition-colors active:scale-95"
             style={{ backgroundColor: activeTheme.foregroundColor, color: activeTheme.textColor }}
           >
@@ -46,7 +72,7 @@ export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop
           </button>
           
           <button
-            onClick={onRetry}
+            onClick={handleRetry}
             className="flex flex-col items-center justify-center p-4 rounded-2xl transition-colors active:scale-95 shadow-xl shadow-black/20"
             style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
           >
@@ -55,7 +81,7 @@ export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop
           </button>
 
           <button
-            onClick={onShop}
+            onClick={handleShop}
             className="flex flex-col items-center justify-center p-4 rounded-2xl transition-colors active:scale-95"
             style={{ backgroundColor: activeTheme.foregroundColor, color: activeTheme.textColor }}
           >
@@ -64,6 +90,6 @@ export const GameOverScreen: React.FC<Props> = ({ score, onRetry, onHome, onShop
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

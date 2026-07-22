@@ -2,6 +2,8 @@ import React from 'react';
 import { useMetaStore } from '../store/metaStore';
 import { Play, ShoppingBag, Volume2, VolumeX, Keyboard, Touchpad } from 'lucide-react';
 import { AVAILABLE_THEMES } from '../game/constants';
+import { motion } from 'framer-motion';
+import { initAudio, playClick } from '../utils/audio';
 
 interface Props {
   onPlay: () => void;
@@ -9,19 +11,43 @@ interface Props {
 }
 
 export const MenuScreen: React.FC<Props> = ({ onPlay, onShop }) => {
-  const { bestScore, controlMode, setControlMode, equippedThemeId } = useMetaStore();
-  const [muted, setMuted] = React.useState(false);
+  const { bestScore, controlMode, setControlMode, equippedThemeId, muted, setMuted } = useMetaStore();
 
   const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
 
   const toggleControlMode = () => {
+    playClick();
     setControlMode(controlMode === 'keyboard' ? 'touch' : 'keyboard');
   };
 
+  const handlePlay = () => {
+    initAudio();
+    playClick();
+    onPlay();
+  };
+
+  const handleShop = () => {
+    initAudio();
+    playClick();
+    onShop();
+  };
+
+  const handleMute = () => {
+    initAudio();
+    playClick();
+    setMuted(!muted);
+  };
+
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="absolute inset-0 flex flex-col items-center justify-center"
+    >
       <div className="flex flex-col items-center space-y-8">
-        <h1 className="text-6xl font-black tracking-tighter">ASCEND</h1>
+        <h1 className="text-6xl font-black tracking-tight">ASCEND</h1>
         
         <div className="text-lg font-medium" style={{ opacity: 0.7 }}>
           BEST SCORE <span className="font-bold ml-2" style={{ opacity: 1 }}>{bestScore}</span>
@@ -29,7 +55,7 @@ export const MenuScreen: React.FC<Props> = ({ onPlay, onShop }) => {
 
         <div className="flex flex-col space-y-4 w-64">
           <button
-            onClick={onPlay}
+            onClick={handlePlay}
             className="flex items-center justify-center w-full py-4 rounded-2xl text-xl font-bold transition-colors active:scale-95"
             style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
           >
@@ -38,7 +64,7 @@ export const MenuScreen: React.FC<Props> = ({ onPlay, onShop }) => {
           </button>
           
           <button
-            onClick={onShop}
+            onClick={handleShop}
             className="flex items-center justify-center w-full py-4 rounded-2xl text-xl font-bold transition-colors active:scale-95"
             style={{ backgroundColor: activeTheme.foregroundColor, color: activeTheme.textColor }}
           >
@@ -63,13 +89,13 @@ export const MenuScreen: React.FC<Props> = ({ onPlay, onShop }) => {
         </button>
 
         <button
-          onClick={() => setMuted(!muted)}
+          onClick={handleMute}
           className="p-3 rounded-full transition-colors"
           style={{ backgroundColor: activeTheme.foregroundColor, color: activeTheme.textColor }}
         >
           {muted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useGameLoop } from '../game/useGameLoop';
 import { useMetaStore } from '../store/metaStore';
 import { AVAILABLE_THEMES } from '../game/constants';
+import { motion } from 'framer-motion';
 
 interface Props {
   onGameOver: (score: number) => void;
@@ -48,7 +49,11 @@ export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
   }, [controlMode, handleInput]);
 
   return (
-    <div 
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       className={`absolute inset-0 ${controlMode === 'touch' ? 'cursor-pointer' : ''}`}
       onPointerDown={handlePointerDown}
     >
@@ -75,6 +80,6 @@ export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
         ref={canvasRef}
         className="block w-full h-full touch-none"
       />
-    </div>
+    </motion.div>
   );
 };

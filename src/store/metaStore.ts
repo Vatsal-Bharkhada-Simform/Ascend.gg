@@ -10,6 +10,7 @@ interface MetaStore extends SaveData {
   unlockTheme: (id: string, cost: number) => void;
   equipTheme: (id: string) => void;
   setControlMode: (mode: 'touch' | 'keyboard') => void;
+  setMuted: (muted: boolean) => void;
 }
 
 const defaultControlMode =
@@ -27,6 +28,7 @@ export const useMetaStore = create<MetaStore>()(
       unlockedThemeIds: ['default'],
       equippedThemeId: 'default',
       controlMode: defaultControlMode,
+      muted: false,
 
       setBestScore: (score) =>
         set((state) => ({ bestScore: Math.max(state.bestScore, score) })),
@@ -61,6 +63,8 @@ export const useMetaStore = create<MetaStore>()(
       equipTheme: (id) => set({ equippedThemeId: id }),
 
       setControlMode: (mode) => set({ controlMode: mode }),
+
+      setMuted: (muted) => set({ muted }),
     }),
     {
       name: 'ascend-save-data',
