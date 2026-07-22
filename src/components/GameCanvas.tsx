@@ -1,29 +1,33 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
+import { useGameLoop } from '../game/useGameLoop';
 
 interface Props {
   onGameOver: (score: number) => void;
 }
 
-export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
+export const GameCanvas: React.FC<Props> = ({ onGameOver }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const { handleInput } = useGameLoop(canvasRef, onGameOver);
 
-  // We will implement the game loop and rendering here in Phase 1 & 2
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Placeholder clear
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, []);
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Determine left or right side based on screen width
+    const width = window.innerWidth;
+    if (e.clientX < width / 2) {
+      handleInput('left');
+    } else {
+      handleInput('right');
+    }
+  };
 
   return (
-    <div className="absolute inset-0 bg-white">
-      {/* HUD overlay will go here */}
+    <div 
+      className="absolute inset-0 bg-white cursor-pointer"
+      onPointerDown={handlePointerDown}
+    >
+      {/* HUD overlay */}
       <div className="absolute top-12 left-0 right-0 flex justify-center z-10 pointer-events-none">
-        <div className="text-4xl font-black text-gray-900">0</div>
+        <div className="text-4xl font-black text-gray-900 drop-shadow-md">0</div>
       </div>
       
       <canvas

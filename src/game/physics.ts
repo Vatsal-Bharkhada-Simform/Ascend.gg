@@ -1,4 +1,4 @@
-import { RunState, DiamondState } from '../types/game';
+import type { RunState, DiamondState } from '../types/game';
 import { GRAVITY, THRUST_X, THRUST_Y, BOUNCE_DAMPING, DIAMOND_RADIUS } from './constants';
 
 export const updatePhysics = (state: RunState, dt: number) => {
