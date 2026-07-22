@@ -32,15 +32,7 @@ export const COMBO_TIME_LIMIT = 2; // seconds to reach next gate before multipli
 export const BACKGROUND_COLOR = '#FFFFFF';
 export const DIAMOND_COLOR = '#111827'; // slate-900 (dark minimalist)
 
-// We cycle through these colors based on score intervals
-export const GATE_COLORS = [
-  '#3B82F6', // Blue
-  '#10B981', // Emerald
-  '#F59E0B', // Amber
-  '#EF4444', // Red
-  '#8B5CF6', // Violet
-  '#EC4899', // Pink
-];
+
 export const COLOR_CHANGE_INTERVAL = 10; // Change color every 10 points
 
 // Death Animation
@@ -64,32 +56,230 @@ export const AVAILABLE_THEMES = [
     name: 'Classic Light',
     cost: 0,
     backgroundColor: '#FFFFFF',
-    outOfBoundsColor: '#F3F4F6', // gray-100
+    outOfBoundsColor: '#F3F4F6',
     gateColors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
-    foregroundColor: '#F9FAFB', // gray-50
-    accentColor: '#F59E0B', // amber-500
-    textColor: '#111827', // gray-900
+    foregroundColor: '#F9FAFB',
+    accentColor: '#F59E0B',
+    textColor: '#111827',
   },
   {
     id: 'dark',
     name: 'Dark Mode',
     cost: 200,
-    backgroundColor: '#222222', // gray-800
-    outOfBoundsColor: '#111111', // gray-900
+    backgroundColor: '#222222',
+    outOfBoundsColor: '#111111',
     gateColors: ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA', '#F472B6'],
-    foregroundColor: '#333333', // slightly lighter than bg
-    accentColor: '#FBBF24', // amber-400
-    textColor: '#F3F4F6', // gray-100
+    foregroundColor: '#333333',
+    accentColor: '#FBBF24',
+    textColor: '#F3F4F6',
   },
   {
     id: 'cyberpunk',
     name: 'Cyberpunk Neon',
     cost: 500,
-    backgroundColor: '#0F172A', // slate-900
-    outOfBoundsColor: '#020617', // slate-950
+    backgroundColor: '#0F172A',
+    outOfBoundsColor: '#020617',
     gateColors: ['#06B6D4', '#22C55E', '#EAB308', '#F43F5E', '#D946EF', '#14B8A6'],
-    foregroundColor: '#1E293B', // slate-800
-    accentColor: '#F43F5E', // rose-500
-    textColor: '#E2E8F0', // slate-200
+    foregroundColor: '#1E293B',
+    accentColor: '#F43F5E',
+    textColor: '#E2E8F0',
+  },
+  {
+    id: 'sakura',
+    name: 'Sakura Bloom',
+    cost: 300,
+    backgroundColor: '#FFF1F2',
+    outOfBoundsColor: '#FFE4E6',
+    gateColors: ['#FB7185', '#F472B6', '#C084FC', '#FDA4AF', '#F9A8D4', '#E879F9'],
+    foregroundColor: '#FFE4E6',
+    accentColor: '#FB7185',
+    textColor: '#881337',
+  },
+  {
+    id: 'forest',
+    name: 'Deep Forest',
+    cost: 300,
+    backgroundColor: '#0C1F17',
+    outOfBoundsColor: '#071410',
+    gateColors: ['#4ADE80', '#A3E635', '#FACC15', '#22D3EE', '#84CC16', '#2DD4BF'],
+    foregroundColor: '#14301F',
+    accentColor: '#A3E635',
+    textColor: '#D1FAE5',
+  },
+  {
+    id: 'desert',
+    name: 'Desert Dune',
+    cost: 350,
+    backgroundColor: '#FEF3C7',
+    outOfBoundsColor: '#FDE68A',
+    gateColors: ['#EA580C', '#B45309', '#DC2626', '#65A30D', '#0891B2', '#9333EA'],
+    foregroundColor: '#FDE68A',
+    accentColor: '#EA580C',
+    textColor: '#78350F',
+  },
+  {
+    id: 'ocean',
+    name: 'Ocean Depths',
+    cost: 350,
+    backgroundColor: '#082F49',
+    outOfBoundsColor: '#041D30',
+    gateColors: ['#38BDF8', '#2DD4BF', '#818CF8', '#67E8F9', '#4ADE80', '#A78BFA'],
+    foregroundColor: '#0C4A6E',
+    accentColor: '#38BDF8',
+    textColor: '#E0F2FE',
+  },
+  {
+    id: 'sunset',
+    name: 'Sunset Blvd',
+    cost: 400,
+    backgroundColor: '#1E1B2E',
+    outOfBoundsColor: '#141225',
+    gateColors: ['#FB923C', '#F472B6', '#FBBF24', '#F87171', '#E879F9', '#FCA5A5'],
+    foregroundColor: '#2D2A45',
+    accentColor: '#FB923C',
+    textColor: '#FEF3C7',
+  },
+  {
+    id: 'mono',
+    name: 'Monochrome',
+    cost: 250,
+    backgroundColor: '#FAFAFA',
+    outOfBoundsColor: '#E5E5E5',
+    gateColors: ['#171717', '#404040', '#525252', '#737373', '#A3A3A3', '#D4D4D4'],
+    foregroundColor: '#E5E5E5',
+    accentColor: '#171717',
+    textColor: '#171717',
+  },
+  {
+    id: 'candy',
+    name: 'Candy Pop',
+    cost: 450,
+    backgroundColor: '#FDF4FF',
+    outOfBoundsColor: '#FAE8FF',
+    gateColors: ['#F97316', '#22D3EE', '#A855F7', '#FACC15', '#F43F5E', '#4ADE80'],
+    foregroundColor: '#FAE8FF',
+    accentColor: '#A855F7',
+    textColor: '#701A75',
+  },
+  {
+    id: 'terminal',
+    name: 'Terminal Green',
+    cost: 400,
+    backgroundColor: '#000000',
+    outOfBoundsColor: '#0A0A0A',
+    gateColors: ['#22C55E', '#4ADE80', '#86EFAC', '#16A34A', '#15803D', '#166534'],
+    foregroundColor: '#0D1F0D',
+    accentColor: '#22C55E',
+    textColor: '#4ADE80',
+  },
+  {
+    id: 'pastel-mint',
+    name: 'Mint Cream',
+    cost: 300,
+    backgroundColor: '#F0FDF9',
+    outOfBoundsColor: '#D1FAE9',
+    gateColors: ['#5EEAD4', '#A7F3D0', '#FDE68A', '#FCA5A5', '#C4B5FD', '#93C5FD'],
+    foregroundColor: '#D1FAE9',
+    accentColor: '#2DD4BF',
+    textColor: '#134E4A',
+  },
+  {
+    id: 'pastel-lavender',
+    name: 'Lavender Fields',
+    cost: 300,
+    backgroundColor: '#F5F3FF',
+    outOfBoundsColor: '#EDE9FE',
+    gateColors: ['#C4B5FD', '#A5B4FC', '#F9A8D4', '#FDE68A', '#93C5FD', '#6EE7B7'],
+    foregroundColor: '#EDE9FE',
+    accentColor: '#A78BFA',
+    textColor: '#4C1D95',
+  },
+  {
+    id: 'pastel-peach',
+    name: 'Peach Sorbet',
+    cost: 300,
+    backgroundColor: '#FFF7ED',
+    outOfBoundsColor: '#FFEDD5',
+    gateColors: ['#FDBA74', '#FCA5A5', '#FDE68A', '#BEF264', '#93C5FD', '#F9A8D4'],
+    foregroundColor: '#FFEDD5',
+    accentColor: '#FB923C',
+    textColor: '#7C2D12',
+  },
+  {
+    id: 'pastel-sky',
+    name: 'Baby Blue',
+    cost: 300,
+    backgroundColor: '#F0F9FF',
+    outOfBoundsColor: '#E0F2FE',
+    gateColors: ['#7DD3FC', '#BAE6FD', '#FBCFE8', '#FDE68A', '#C7D2FE', '#A7F3D0'],
+    foregroundColor: '#E0F2FE',
+    accentColor: '#38BDF8',
+    textColor: '#0C4A6E',
+  },
+  {
+    id: 'coral-reef',
+    name: 'Coral Reef',
+    cost: 350,
+    backgroundColor: '#FFF5F2',
+    outOfBoundsColor: '#FFE4DE',
+    gateColors: ['#FF7F6B', '#FF9F87', '#38BDF8', '#FBBF24', '#2DD4BF', '#F472B6'],
+    foregroundColor: '#FFE4DE',
+    accentColor: '#FF7F6B',
+    textColor: '#7C2D12',
+  },
+  {
+    id: 'dark-midnight',
+    name: 'Midnight Blue',
+    cost: 400,
+    backgroundColor: '#0B1120',
+    outOfBoundsColor: '#050810',
+    gateColors: ['#3B82F6', '#60A5FA', '#818CF8', '#38BDF8', '#6366F1', '#0EA5E9'],
+    foregroundColor: '#111827',
+    accentColor: '#3B82F6',
+    textColor: '#DBEAFE',
+  },
+  {
+    id: 'dark-crimson',
+    name: 'Crimson Void',
+    cost: 400,
+    backgroundColor: '#1A0A0A',
+    outOfBoundsColor: '#0D0404',
+    gateColors: ['#EF4444', '#F87171', '#FB923C', '#FBBF24', '#F43F5E', '#DC2626'],
+    foregroundColor: '#2A1010',
+    accentColor: '#EF4444',
+    textColor: '#FEE2E2',
+  },
+  {
+    id: 'dark-obsidian',
+    name: 'Obsidian',
+    cost: 350,
+    backgroundColor: '#18181B',
+    outOfBoundsColor: '#0A0A0B',
+    gateColors: ['#71717A', '#A1A1AA', '#D4D4D8', '#FAFAFA', '#52525B', '#E4E4E7'],
+    foregroundColor: '#27272A',
+    accentColor: '#D4D4D8',
+    textColor: '#F4F4F5',
+  },
+  {
+    id: 'dark-plum',
+    name: 'Royal Plum',
+    cost: 450,
+    backgroundColor: '#1E1030',
+    outOfBoundsColor: '#100819',
+    gateColors: ['#C084FC', '#E879F9', '#818CF8', '#F472B6', '#A78BFA', '#D946EF'],
+    foregroundColor: '#2E1A47',
+    accentColor: '#C084FC',
+    textColor: '#F3E8FF',
+  },
+  {
+    id: 'dark-amber',
+    name: 'Amber Ember',
+    cost: 400,
+    backgroundColor: '#1C1410',
+    outOfBoundsColor: '#0E0A08',
+    gateColors: ['#F59E0B', '#FBBF24', '#F97316', '#EF4444', '#EAB308', '#D97706'],
+    foregroundColor: '#2B2116',
+    accentColor: '#F59E0B',
+    textColor: '#FEF3C7',
   },
 ];

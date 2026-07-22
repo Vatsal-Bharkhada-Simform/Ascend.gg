@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMetaStore } from '../store/metaStore';
-import { ChevronLeft, Check, Lock } from 'lucide-react';
+import { ChevronLeft, Check, Lock, Unlock } from 'lucide-react';
 import { AVAILABLE_SKINS, AVAILABLE_THEMES } from '../game/constants';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { initAudio, playClick } from '../utils/audio';
@@ -139,7 +139,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   }, [activeTab]);
 
   const renderSkins = () => (
-    <div className="space-y-4 p-6 max-w-lg mx-auto w-full">
+    <div className="space-y-3 sm:space-y-4 p-4 sm:p-6 max-w-lg mx-auto w-full">
       {AVAILABLE_SKINS.map((skin, i) => {
         const isUnlocked = unlockedSkinIds.includes(skin.id);
         const isEquipped = equippedSkinId === skin.id;
@@ -164,7 +164,8 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
             variants={cardVariants}
             initial="hidden"
             animate="visible"
-            className="flex items-center justify-between p-4 rounded-2xl border-2 transition-colors"
+            onClick={handleSkinAction}
+            className="flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-colors cursor-pointer"
             style={{
               borderColor: isFocused
                 ? activeTheme.accentColor
@@ -177,9 +178,9 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
             }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <div
-                className="w-12 h-12 rounded-lg transform rotate-45"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg transform rotate-45"
                 style={{ backgroundColor: skin.color, boxShadow: skin.glow ? `0 0 15px ${skin.color}` : 'none' }}
               />
               <div>
@@ -194,38 +195,22 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
 
             {isEquipped ? (
               <div
-                className="flex items-center font-bold px-4 py-2 rounded-full text-sm"
+                className="flex items-center justify-center w-10 h-10 rounded-full"
                 style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
               >
-                <Check className="w-4 h-4 mr-1" /> EQUIPPED
+                <Check className="w-5 h-5" />
               </div>
-            ) : isUnlocked ? (
-              <motion.button
-                onClick={handleSkinAction}
-                className="px-6 py-2 rounded-full font-bold text-sm"
-                style={{ backgroundColor: activeTheme.textColor, color: activeTheme.backgroundColor }}
-                whileTap={{ scale: 0.92 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-              >
-                EQUIP
-              </motion.button>
-            ) : (
-              <motion.button
-                onClick={handleSkinAction}
-                disabled={!canAfford}
-                className="flex items-center px-6 py-2 rounded-full font-bold text-sm"
+            ) : isUnlocked ? null : (
+              <div
+                className="relative flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm"
                 style={{
                   backgroundColor: canAfford ? activeTheme.accentColor : activeTheme.foregroundColor,
                   color: canAfford ? activeTheme.backgroundColor : activeTheme.textColor,
                   opacity: canAfford ? 1 : 0.5,
-                  cursor: canAfford ? 'pointer' : 'not-allowed',
                 }}
-                whileTap={canAfford ? { scale: 0.92 } : {}}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
-                {!canAfford && <Lock className="w-4 h-4 mr-1" />}
-                UNLOCK
-              </motion.button>
+                {canAfford ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+              </div>
             )}
           </motion.div>
         );
@@ -234,7 +219,7 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
   );
 
   const renderThemes = () => (
-    <div className="space-y-4 p-6 max-w-lg mx-auto w-full">
+    <div className="space-y-3 sm:space-y-4 p-4 sm:p-6 max-w-lg mx-auto w-full">
       {AVAILABLE_THEMES.map((theme, i) => {
         const isUnlocked = unlockedThemeIds.includes(theme.id);
         const isEquipped = equippedThemeId === theme.id;
@@ -259,7 +244,8 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
             variants={cardVariants}
             initial="hidden"
             animate="visible"
-            className="flex items-center justify-between p-4 rounded-2xl border-2 transition-colors"
+            onClick={handleThemeAction}
+            className="flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 transition-colors cursor-pointer"
             style={{
               borderColor: isFocused
                 ? activeTheme.accentColor
@@ -272,9 +258,9 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
             }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <div
-                className="w-12 h-12 rounded-lg border-2 flex overflow-hidden"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 flex overflow-hidden shrink-0"
                 style={{ backgroundColor: theme.backgroundColor, borderColor: activeTheme.textColor }}
               >
                 {theme.gateColors.slice(0, 3).map((c, idx) => (
@@ -293,38 +279,22 @@ export const ShopScreen: React.FC<Props> = ({ onBack }) => {
 
             {isEquipped ? (
               <div
-                className="flex items-center font-bold px-4 py-2 rounded-full text-sm"
+                className="flex items-center justify-center w-10 h-10 rounded-full shrink-0"
                 style={{ backgroundColor: activeTheme.accentColor, color: activeTheme.backgroundColor }}
               >
-                <Check className="w-4 h-4 mr-1" /> EQUIPPED
+                <Check className="w-5 h-5" />
               </div>
-            ) : isUnlocked ? (
-              <motion.button
-                onClick={handleThemeAction}
-                className="px-6 py-2 rounded-full font-bold text-sm"
-                style={{ backgroundColor: activeTheme.textColor, color: activeTheme.backgroundColor }}
-                whileTap={{ scale: 0.92 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-              >
-                EQUIP
-              </motion.button>
-            ) : (
-              <motion.button
-                onClick={handleThemeAction}
-                disabled={!canAfford}
-                className="flex items-center px-6 py-2 rounded-full font-bold text-sm"
+            ) : isUnlocked ? null : (
+              <div
+                className="relative flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm shrink-0"
                 style={{
                   backgroundColor: canAfford ? activeTheme.accentColor : activeTheme.foregroundColor,
                   color: canAfford ? activeTheme.backgroundColor : activeTheme.textColor,
                   opacity: canAfford ? 1 : 0.5,
-                  cursor: canAfford ? 'pointer' : 'not-allowed',
                 }}
-                whileTap={canAfford ? { scale: 0.92 } : {}}
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
-                {!canAfford && <Lock className="w-4 h-4 mr-1" />}
-                UNLOCK
-              </motion.button>
+                {canAfford ? <Unlock className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+              </div>
             )}
           </motion.div>
         );

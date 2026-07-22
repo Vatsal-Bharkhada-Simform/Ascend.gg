@@ -3,8 +3,7 @@ import {
   BASE_GATE_SPACING, 
   DIAMOND_RADIUS, 
   HAZARD_SIZE,
-  COLOR_CHANGE_INTERVAL,
-  GATE_COLORS
+  COLOR_CHANGE_INTERVAL
 } from './constants';
 import { getDifficultyParams } from './difficulty';
 
@@ -15,7 +14,8 @@ export const generateInitialGates = (
   count: number,
   playAreaLeft: number,
   playAreaRight: number,
-  startY: number
+  startY: number,
+  themeGateColorsLength: number
 ): { gate: Gate; hazards: Hazard[] }[] => {
   const chunks: { gate: Gate; hazards: Hazard[] }[] = [];
   let currentY = startY - BASE_GATE_SPACING;
@@ -23,7 +23,7 @@ export const generateInitialGates = (
   for (let i = 0; i < count; i++) {
     // No hazards for the initial gates (score 0)
     chunks.push({ 
-      gate: createRandomGate(currentY, playAreaLeft, playAreaRight, 0),
+      gate: createRandomGate(currentY, playAreaLeft, playAreaRight, 0, themeGateColorsLength),
       hazards: [] 
     });
     currentY -= BASE_GATE_SPACING;
@@ -37,16 +37,17 @@ export const generateNextGate = (
   previousGateY: number,
   playAreaLeft: number,
   playAreaRight: number,
-  currentScore: number
+  currentScore: number,
+  themeGateColorsLength: number
 ): { gate: Gate; hazards: Hazard[] } => {
   
   const gateY = highestGateY - BASE_GATE_SPACING;
-  const gate = createRandomGate(gateY, playAreaLeft, playAreaRight, currentScore);
+  const gate = createRandomGate(gateY, playAreaLeft, playAreaRight, currentScore, themeGateColorsLength);
   
   const { hazardCount } = getDifficultyParams(currentScore);
   const hazards: Hazard[] = [];
 
-  const colorIndex = Math.floor(currentScore / COLOR_CHANGE_INTERVAL) % GATE_COLORS.length;
+  const colorIndex = Math.floor(currentScore / COLOR_CHANGE_INTERVAL) % themeGateColorsLength;
 
   const minClearance = 3 * (DIAMOND_RADIUS * 2); // 3 diamond widths
 
@@ -98,7 +99,7 @@ export const generateNextGate = (
   return { gate, hazards };
 };
 
-const createRandomGate = (y: number, playAreaLeft: number, playAreaRight: number, score: number): Gate => {
+const createRandomGate = (y: number, playAreaLeft: number, playAreaRight: number, score: number, themeGateColorsLength: number): Gate => {
   const { gapWidth } = getDifficultyParams(score);
   
   const playAreaWidth = playAreaRight - playAreaLeft;
@@ -106,7 +107,7 @@ const createRandomGate = (y: number, playAreaLeft: number, playAreaRight: number
   const gapStart = playAreaLeft + (Math.random() * maxGapStart);
   const gapEnd = gapStart + gapWidth;
 
-  const colorIndex = Math.floor(score / COLOR_CHANGE_INTERVAL) % GATE_COLORS.length;
+  const colorIndex = Math.floor(score / COLOR_CHANGE_INTERVAL) % themeGateColorsLength;
 
   return {
     id: nextGateId++,

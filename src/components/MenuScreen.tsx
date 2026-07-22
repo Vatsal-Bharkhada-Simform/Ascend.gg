@@ -40,11 +40,11 @@ export const MenuScreen: React.FC<Props> = ({ onPlay, onShop }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="absolute inset-0 flex flex-col px-8"
+      className="absolute inset-0 flex flex-col px-6 sm:px-8"
     >
       {/* Title — upper third, left-aligned, owns the space */}
       <div className="pt-16">
-        <h1 className="text-8xl font-black leading-none">
+        <h1 className="text-7xl sm:text-8xl font-black leading-none">
           ASCEND
         </h1>
         {/* Short accent rule beneath title */}

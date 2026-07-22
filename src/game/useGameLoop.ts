@@ -7,7 +7,7 @@ import { resizeCanvas } from '../utils/canvas';
 import { generateInitialGates, generateNextGate, resetGateGenerator } from './gateGenerator';
 import { checkGateCollision, checkGateClear, checkHazardCollision } from './collision';
 import { updateCamera } from './camera';
-import { MAX_PLAY_WIDTH, COMBO_TIME_LIMIT, MAX_MULTIPLIER, DEATH_JITTER_DURATION } from './constants';
+import { MAX_PLAY_WIDTH, COMBO_TIME_LIMIT, MAX_MULTIPLIER, DEATH_JITTER_DURATION, AVAILABLE_THEMES } from './constants';
 
 const FIXED_TIMESTEP = 1 / 120; // 120Hz physics update
 const MAX_ACCUMULATOR = 0.1; // Prevent death spiral on long lags
@@ -50,7 +50,8 @@ export const useGameLoop = (
     const playAreaRight = playAreaLeft + playWidth;
 
     const startY = logicalHeight / 2;
-    const initialChunks = generateInitialGates(5, playAreaLeft, playAreaRight, startY);
+    const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
+    const initialChunks = generateInitialGates(5, playAreaLeft, playAreaRight, startY, activeTheme.gateColors.length);
     stateRef.current.gates = initialChunks.map(c => c.gate);
     stateRef.current.hazards = initialChunks.flatMap(c => c.hazards);
     stateRef.current.cameraY = startY - logicalHeight / 2;
@@ -160,8 +161,9 @@ export const useGameLoop = (
 
             // Generate new gate above the highest one
             const highestGateY = Math.min(...state.gates.map(g => g.y));
+            const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
             
-            const newChunk = generateNextGate(highestGateY, highestGateY, playAreaLeft, playAreaRight, state.score);
+            const newChunk = generateNextGate(highestGateY, highestGateY, playAreaLeft, playAreaRight, state.score, activeTheme.gateColors.length);
             state.gates.push(newChunk.gate);
             state.hazards.push(...newChunk.hazards);
           }

@@ -39,7 +39,7 @@ export const GameOverScreen: React.FC<Props> = ({ score, coinsEarned, onRetry, o
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="absolute inset-0 flex flex-col px-8"
+      className="absolute inset-0 flex flex-col px-6 sm:px-8"
     >
       {/* Small muted label — "GAME OVER" is not the headline, the score is */}
       <motion.div
@@ -61,7 +61,7 @@ export const GameOverScreen: React.FC<Props> = ({ score, coinsEarned, onRetry, o
           transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.1 }}
           className="text-center"
         >
-          <div className="text-9xl font-black leading-none tabular-nums">{score}</div>
+          <div className="text-8xl sm:text-9xl font-black leading-none tabular-nums">{score}</div>
           <div className="text-xs font-black tracking-widest mt-3" style={{ opacity: 0.35 }}>
             YOUR SCORE
           </div>
