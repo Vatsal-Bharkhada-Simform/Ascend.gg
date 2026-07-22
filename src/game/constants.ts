@@ -1,6 +1,6 @@
 // Physics & Math Constants
 export const GRAVITY = 1500; // pixels per second squared
-export const THRUST_X = 400; // instant horizontal velocity on tap
+export const THRUST_X = 200; // instant horizontal velocity on tap
 export const THRUST_Y = 600; // instant vertical velocity on tap
 export const BOUNCE_DAMPING = 0.8; // retaining 80% horizontal speed on wall hit
 
@@ -13,10 +13,14 @@ export const BASE_GAP_WIDTH = 120; // initial gap width
 export const MIN_GAP_WIDTH = 60; // smallest possible gap
 export const MAX_SCORE = 100; // point where difficulty caps out
 
+// Play Area Bounds for PC
+export const MAX_PLAY_WIDTH = 500;
+export const OUT_OF_BOUNDS_COLOR = '#F3F4F6'; // Tailwind gray-100
+
 // Generation Rules
 export const MIN_OBSTACLES_PER_GATE = 1;
 export const MAX_OBSTACLES_PER_GATE = 3;
-export const MIN_GAP_RATIO = 0.15; // minimum percentage of screen width for a gap
+export const MIN_GAP_RATIO = 0.2; // minimum percentage of screen width for a gap
 export const MAX_GAP_RATIO = 0.35; // maximum percentage of screen width for a gap
 export const BASE_GATE_SPACING = 400;
 
