@@ -14,6 +14,7 @@ export interface Gate {
   gapStart: number;
   gapEnd: number;
   cleared: boolean;
+  colorIndex: number;
 }
 
 export interface Hazard {
@@ -32,6 +33,7 @@ export interface RunState {
   score: number;
   multiplier: number;
   comboTimer: number;
+  deathTime?: number;
 }
 
 export interface Skin {

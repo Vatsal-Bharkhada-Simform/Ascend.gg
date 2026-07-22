@@ -1,5 +1,5 @@
 import type { RunState } from '../types/game';
-import { BACKGROUND_COLOR, OUT_OF_BOUNDS_COLOR, DIAMOND_COLOR, DIAMOND_RADIUS, GATE_COLORS, COLOR_CHANGE_INTERVAL, GATE_HEIGHT } from './constants';
+import { BACKGROUND_COLOR, OUT_OF_BOUNDS_COLOR, DIAMOND_COLOR, DIAMOND_RADIUS, GATE_COLORS, GATE_HEIGHT, DEATH_JITTER_INTENSITY } from './constants';
 import { clearCanvas } from '../utils/canvas';
 
 export const renderGame = (
@@ -14,9 +14,15 @@ export const renderGame = (
   // Clear the screen
   clearCanvas(ctx, width, height, BACKGROUND_COLOR);
 
-  const { diamond, gates, score, cameraY } = state;
+  const { diamond, gates, cameraY, deathTime } = state;
 
   ctx.save();
+  
+  if (deathTime !== undefined) {
+    const intensity = DEATH_JITTER_INTENSITY;
+    // A quick hack for random jitter (since we don't pass time to renderGame, we just random jitter every frame)
+    ctx.translate((Math.random() - 0.5) * intensity * dpr, (Math.random() - 0.5) * intensity * dpr);
+  }
   
   // Draw Out-of-Bounds Areas
   ctx.fillStyle = OUT_OF_BOUNDS_COLOR;
@@ -27,15 +33,11 @@ export const renderGame = (
     ctx.fillRect(playAreaRight * dpr, 0, width - (playAreaRight * dpr), height);
   }
 
-  // Determine current gate color
-  const colorIndex = Math.floor(score / COLOR_CHANGE_INTERVAL) % GATE_COLORS.length;
-  const currentGateColor = GATE_COLORS[colorIndex];
-
   // Draw Gates
-  ctx.fillStyle = currentGateColor;
   gates.forEach(gate => {
     // Only draw if on screen
     if (gate.y > cameraY - height && gate.y < cameraY + height) {
+      ctx.fillStyle = GATE_COLORS[gate.colorIndex % GATE_COLORS.length];
       const screenY = (gate.y - cameraY) * dpr;
       const screenH = GATE_HEIGHT * dpr;
       const gapStartX = gate.gapStart * dpr;

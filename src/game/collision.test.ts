@@ -9,7 +9,8 @@ describe('Collision Engine', () => {
     y: 100,
     gapStart: 200,
     gapEnd: 300,
-    cleared: false
+    cleared: false,
+    colorIndex: 0
   };
 
   describe('checkGateCollision', () => {

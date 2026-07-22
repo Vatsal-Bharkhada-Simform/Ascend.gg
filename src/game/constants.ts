@@ -42,3 +42,7 @@ export const GATE_COLORS = [
   '#EC4899', // Pink
 ];
 export const COLOR_CHANGE_INTERVAL = 10; // Change color every 10 points
+
+// Death Animation
+export const DEATH_JITTER_DURATION = 0.5; // seconds
+export const DEATH_JITTER_INTENSITY = 10; // pixels of shake

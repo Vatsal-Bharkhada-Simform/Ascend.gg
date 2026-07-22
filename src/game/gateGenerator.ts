@@ -106,12 +106,15 @@ const createRandomGate = (y: number, playAreaLeft: number, playAreaRight: number
   const gapStart = playAreaLeft + (Math.random() * maxGapStart);
   const gapEnd = gapStart + gapWidth;
 
+  const colorIndex = Math.floor(score / COLOR_CHANGE_INTERVAL) % GATE_COLORS.length;
+
   return {
     id: nextGateId++,
     y,
     gapStart,
     gapEnd,
     cleared: false,
+    colorIndex
   };
 };
 
