@@ -1,16 +1,21 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useGameLoop } from '../game/useGameLoop';
+import { useMetaStore } from '../store/metaStore';
 
 interface Props {
   onGameOver: (score: number) => void;
 }
 
-export const GameCanvas: React.FC<Props> = ({ onGameOver }) => {
+export const GameCanvas: React.FC<Props> = ({ onGameOver: _onGameOver }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  const { handleInput } = useGameLoop(canvasRef, onGameOver);
+  const { handleInput } = useGameLoop(canvasRef, _onGameOver);
+  const { controlMode } = useMetaStore();
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Disable touch controls if in keyboard mode
+    if (controlMode === 'keyboard') return;
+
     // Determine left or right side based on screen width
     const width = window.innerWidth;
     if (e.clientX < width / 2) {
@@ -20,9 +25,29 @@ export const GameCanvas: React.FC<Props> = ({ onGameOver }) => {
     }
   };
 
+  useEffect(() => {
+    if (controlMode !== 'keyboard') return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent default scrolling for arrow keys
+      if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      if (e.key.toLowerCase() === 'f' || e.key === 'ArrowLeft') {
+        handleInput('left');
+      } else if (e.key.toLowerCase() === 'j' || e.key === 'ArrowRight') {
+        handleInput('right');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [controlMode, handleInput]);
+
   return (
     <div 
-      className="absolute inset-0 bg-white cursor-pointer"
+      className={`absolute inset-0 bg-white ${controlMode === 'touch' ? 'cursor-pointer' : ''}`}
       onPointerDown={handlePointerDown}
     >
       {/* HUD overlay */}

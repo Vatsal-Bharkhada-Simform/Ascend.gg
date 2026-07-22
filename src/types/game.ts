@@ -45,4 +45,5 @@ export interface SaveData {
   coins: number;
   unlockedSkinIds: string[];
   equippedSkinId: string;
+  controlMode: 'touch' | 'keyboard';
 }

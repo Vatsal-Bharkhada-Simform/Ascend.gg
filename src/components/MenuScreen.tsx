@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMetaStore } from '../store/metaStore';
-import { Play, ShoppingBag, Volume2, VolumeX } from 'lucide-react';
+import { Play, ShoppingBag, Volume2, VolumeX, Keyboard, Touchpad } from 'lucide-react';
 
 interface Props {
   onPlay: () => void;
@@ -8,8 +8,12 @@ interface Props {
 }
 
 export const MenuScreen: React.FC<Props> = ({ onPlay, onShop }) => {
-  const { bestScore } = useMetaStore();
+  const { bestScore, controlMode, setControlMode } = useMetaStore();
   const [muted, setMuted] = React.useState(false);
+
+  const toggleControlMode = () => {
+    setControlMode(controlMode === 'keyboard' ? 'touch' : 'keyboard');
+  };
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center bg-white text-gray-900">
@@ -39,12 +43,26 @@ export const MenuScreen: React.FC<Props> = ({ onPlay, onShop }) => {
         </div>
       </div>
 
-      <button
-        onClick={() => setMuted(!muted)}
-        className="absolute bottom-8 right-8 p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-      >
-        {muted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-      </button>
+      <div className="absolute bottom-8 right-8 flex flex-col space-y-4">
+        <button
+          onClick={toggleControlMode}
+          className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors flex items-center justify-center"
+          title={`Switch to ${controlMode === 'keyboard' ? 'Touch' : 'Keyboard'} Controls`}
+        >
+          {controlMode === 'keyboard' ? (
+            <Keyboard className="w-6 h-6" />
+          ) : (
+            <Touchpad className="w-6 h-6" />
+          )}
+        </button>
+
+        <button
+          onClick={() => setMuted(!muted)}
+          className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+        >
+          {muted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+        </button>
+      </div>
     </div>
   );
 };

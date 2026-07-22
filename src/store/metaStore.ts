@@ -7,7 +7,13 @@ interface MetaStore extends SaveData {
   addCoins: (amount: number) => void;
   unlockSkin: (id: string) => void;
   equipSkin: (id: string) => void;
+  setControlMode: (mode: 'touch' | 'keyboard') => void;
 }
+
+const defaultControlMode =
+  typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0
+    ? 'touch'
+    : 'keyboard';
 
 export const useMetaStore = create<MetaStore>()(
   persist(
@@ -16,6 +22,7 @@ export const useMetaStore = create<MetaStore>()(
       coins: 0,
       unlockedSkinIds: ['default'],
       equippedSkinId: 'default',
+      controlMode: defaultControlMode,
 
       setBestScore: (score) =>
         set((state) => ({ bestScore: Math.max(state.bestScore, score) })),
@@ -31,6 +38,8 @@ export const useMetaStore = create<MetaStore>()(
         })),
 
       equipSkin: (id) => set({ equippedSkinId: id }),
+
+      setControlMode: (mode) => set({ controlMode: mode }),
     }),
     {
       name: 'ascend-save-data',
