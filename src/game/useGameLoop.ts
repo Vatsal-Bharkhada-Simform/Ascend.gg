@@ -51,7 +51,8 @@ export const useGameLoop = (
 
     const startY = logicalHeight / 2;
     const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
-    const initialChunks = generateInitialGates(5, playAreaLeft, playAreaRight, startY, activeTheme.gateColors.length);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const initialChunks = generateInitialGates(5, playAreaLeft, playAreaRight, startY, activeTheme.gateColors.length, isMobile);
     stateRef.current.gates = initialChunks.map(c => c.gate);
     stateRef.current.hazards = initialChunks.flatMap(c => c.hazards);
     stateRef.current.cameraY = startY - logicalHeight / 2;
@@ -162,8 +163,9 @@ export const useGameLoop = (
             // Generate new gate above the highest one
             const highestGateY = Math.min(...state.gates.map(g => g.y));
             const activeTheme = AVAILABLE_THEMES.find(t => t.id === equippedThemeId) || AVAILABLE_THEMES[0];
+            const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
             
-            const newChunk = generateNextGate(highestGateY, highestGateY, playAreaLeft, playAreaRight, state.score, activeTheme.gateColors.length);
+            const newChunk = generateNextGate(highestGateY, highestGateY, playAreaLeft, playAreaRight, state.score, activeTheme.gateColors.length, isMobile);
             state.gates.push(newChunk.gate);
             state.hazards.push(...newChunk.hazards);
           }
@@ -179,7 +181,7 @@ export const useGameLoop = (
       }
 
       // Camera follow
-      updateCamera(state);
+      updateCamera(state, logicalHeight, typeof window !== 'undefined' && window.innerWidth < 768);
 
       // Death by falling off screen
       if (state.diamond.position.y > state.cameraY + logicalHeight + 50) {

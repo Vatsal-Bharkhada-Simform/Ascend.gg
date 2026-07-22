@@ -8,7 +8,10 @@ export const BOUNCE_DAMPING = 0.8; // retaining 80% horizontal speed on wall hit
 export const DIAMOND_RADIUS = 16; // visual and collision radius
 export const GATE_HEIGHT = 24;
 export const HAZARD_SIZE = 24;
-export const FOLLOW_MARGIN = 400; // how far from top the camera follows the player
+export const FOLLOW_MARGIN_PCT = {
+  MOBILE: 0.4,
+  DESKTOP: 0.5,
+};
 export const BASE_GAP_WIDTH = 120; // initial gap width
 export const MIN_GAP_WIDTH = 60; // smallest possible gap
 export const MAX_SCORE = 100; // point where difficulty caps out
@@ -22,7 +25,10 @@ export const MIN_OBSTACLES_PER_GATE = 2;
 export const MAX_OBSTACLES_PER_GATE = 5;
 export const MIN_GAP_RATIO = 0.2; // minimum percentage of screen width for a gap
 export const MAX_GAP_RATIO = 0.35; // maximum percentage of screen width for a gap
-export const BASE_GATE_SPACING = 500;
+export const BASE_GATE_SPACING = {
+  MOBILE: 400,
+  DESKTOP: 500,
+};
 
 // Combo / Scoring
 export const MAX_MULTIPLIER = 3;

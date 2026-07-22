@@ -15,10 +15,12 @@ export const generateInitialGates = (
   playAreaLeft: number,
   playAreaRight: number,
   startY: number,
-  themeGateColorsLength: number
+  themeGateColorsLength: number,
+  isMobile: boolean
 ): { gate: Gate; hazards: Hazard[] }[] => {
   const chunks: { gate: Gate; hazards: Hazard[] }[] = [];
-  let currentY = startY - BASE_GATE_SPACING;
+  const baseSpacing = isMobile ? BASE_GATE_SPACING.MOBILE : BASE_GATE_SPACING.DESKTOP;
+  let currentY = startY - baseSpacing;
 
   for (let i = 0; i < count; i++) {
     // No hazards for the initial gates (score 0)
@@ -26,7 +28,7 @@ export const generateInitialGates = (
       gate: createRandomGate(currentY, playAreaLeft, playAreaRight, 0, themeGateColorsLength),
       hazards: [] 
     });
-    currentY -= BASE_GATE_SPACING;
+    currentY -= baseSpacing;
   }
 
   return chunks;
@@ -38,10 +40,12 @@ export const generateNextGate = (
   playAreaLeft: number,
   playAreaRight: number,
   currentScore: number,
-  themeGateColorsLength: number
+  themeGateColorsLength: number,
+  isMobile: boolean
 ): { gate: Gate; hazards: Hazard[] } => {
   
-  const gateY = highestGateY - BASE_GATE_SPACING;
+  const baseSpacing = isMobile ? BASE_GATE_SPACING.MOBILE : BASE_GATE_SPACING.DESKTOP;
+  const gateY = highestGateY - baseSpacing;
   const gate = createRandomGate(gateY, playAreaLeft, playAreaRight, currentScore, themeGateColorsLength);
   
   const { hazardCount } = getDifficultyParams(currentScore);
@@ -57,7 +61,7 @@ export const generateNextGate = (
   const maxX = playAreaRight - marginH - HAZARD_SIZE;
 
   // 15% vertical margin of the span between gates
-  const marginV = BASE_GATE_SPACING * 0.15;
+  const marginV = baseSpacing * 0.15;
   // gateY is the new gate (higher up, smaller Y). previousGateY is the old gate (lower down, larger Y).
   const minY = gateY + marginV;
   const maxY = previousGateY - marginV - HAZARD_SIZE;
