@@ -21,6 +21,19 @@ function App() {
     setMuted(muted);
   }, [muted]);
 
+  // Dynamically update PWA notch/status bar color based on the active theme
+  useEffect(() => {
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', activeTheme.backgroundColor);
+    } else {
+      metaThemeColor = document.createElement('meta');
+      metaThemeColor.setAttribute('name', 'theme-color');
+      metaThemeColor.setAttribute('content', activeTheme.backgroundColor);
+      document.head.appendChild(metaThemeColor);
+    }
+  }, [activeTheme.backgroundColor]);
+
   const handleGameOver = (score: number) => {
     setLastScore(score);
     setBestScore(score);
